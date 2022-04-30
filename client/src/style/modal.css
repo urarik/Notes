@@ -1,0 +1,156 @@
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+.modal.open {
+    display: flex;
+    align-items: center;
+    animation: modal-bg-show 0.3s;
+}
+.modal section {
+    position: absolute;
+    left: calc(50% - 450px);
+    right: calc(50% - 450px);
+    top: 112px;
+}
+
+.modal button {
+    outline: none;
+    cursor: pointer;
+    border: 0;
+}
+
+
+.modal > section {
+    width: 90%;
+    width: 450px;
+    margin: 0 auto;
+    border-radius: 0.3rem;
+    background-color: #fff;
+    /* 팝업이 열릴때 스르륵 열리는 효과 */
+    animation: modal-show 0.3s;
+    overflow: hidden;
+}
+
+.modal > section > header {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 16px 16px 16px 16px;
+    background-color: #f1f1f1;
+    font-weight: 700;
+}
+
+.modal > section > footer {
+    display: flex;
+    justify-content: end;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+@keyframes modal-show {
+    from {
+      opacity: 0;
+      margin-top: -50px;
+    }
+    to {
+      opacity: 1;
+      margin-top: 0;
+    }
+  }
+@keyframes modal-bg-show {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+}
+
+.modal li {
+    height: 50px;
+    margin: 8px 16px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.modal li .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    font-size: 20px;
+}
+
+.modal > main {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal .search-box {
+    background: var(--primary-color-light);
+    border-radius: 6px;
+}
+
+.search-box input {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color-light);
+}
+
+.modal ul {
+    padding: 0px;
+    margin: 0px
+}
+
+.modal .selected-user-list {
+    height: 40px;
+    margin: 8px 16px;
+    display: flex;
+    flex-direction: row;
+}
+
+.modal main .user:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.modal main .user .text {
+    margin-left: 16px;
+}
+
+
+.selected-user-list .selected-user {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 24px;
+    font-size: 12px;
+    height: 24px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    padding: 0px 8px;
+    margin: 0px 4px;
+}
+
+.selected-user-list .selected-user .remove {
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--tran-03);
+}
+.selected-user-list .selected-user .remove:hover {
+    background-color: #cccccc;
+}

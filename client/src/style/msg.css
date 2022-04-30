@@ -1,0 +1,32 @@
+
+.msg-list-container {
+    padding: 32px 32px;
+    background-color: var(--body-color);
+    height: 100%;
+}
+
+.table .item {
+    cursor: pointer;
+}
+
+.table .item:hover {
+    background-color: #BEC9E5;
+}
+
+.msg-container .content {
+    padding: 32px 0px;
+}
+
+.msg-container .footer {
+    display: flex;
+
+    flex-direction: row-reverse;
+}
+
+.msg-container .decision {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+
+    gap: 16px;
+}

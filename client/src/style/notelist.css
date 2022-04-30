@@ -1,0 +1,90 @@
+
+
+.note-list-container {
+    width: 80%;
+    height: calc(100% - 48px);
+    margin-top: 48px;
+    margin-left: 2.5em;
+    margin-right: 64px;
+    --note-color: #E8EFFF;
+}
+
+.note-list-container header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-left: 1em;
+    left: -1em;
+}
+
+.note-list-container header button{
+    height: 36px;
+}
+
+.note-list-container .note-list-body {
+    display: flex;
+    flex-direction: row;
+    background-color: transparent;
+    max-height: calc(100% - 48px - 16px);
+}
+
+.note-list-container .note {
+    position: relative;
+    left: -1em;
+    width: calc(100% + 3em);
+    border-radius: 16px;
+    padding: 8px 16px;
+    background-color: var(--note-color);
+    min-height: 100%;
+    overflow-y: scroll;
+}
+
+.note-list {
+    list-style-type: none;
+    overflow-y: scroll;
+    padding-left: 0px;
+}
+
+.note-list-container .note,
+.note-list {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.note-list-container .note::-webkit-scrollbar,
+.note-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+.note-list li:not(:last-child) {
+    margin-bottom: 16px;
+}
+
+.note-list li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #BEC9E5;
+    cursor:pointer;
+    padding: 0px 24px;
+    border-radius: 8px;
+    width: 12em;
+    height: 56px;
+    transition: background-color 0.2s;
+}
+.note-list li:hover {
+    background-color: var(--note-color)
+}
+
+.note-list li.clicked {
+    background-color: var(--note-color);
+    min-width: 18em;
+}
+
+.note-list li .title {
+    font-size: 20px;
+}
+.note-list li .admins{
+    font-size: 10px;
+}

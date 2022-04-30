@@ -1,0 +1,42 @@
+
+.switch-checkbox {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.switch-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    width: 32px;
+    height: 16px;
+    background: grey;
+    border-radius: 32px;
+    position: relative;
+    transition: background-color .2s;
+}
+
+.switch-label .switch-button {
+    content: '';
+    position: absolute;
+    left: 0.5px;
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    transition: left 0.2s, transform 0.2s, width 0.2s;
+    background: #fff;
+    box-shadow: 0 0 2px 0 rgb(10, 10, 10, 0.29);
+}
+
+/* left는 %가 containing block 기준
+transform은 자기 기준 */
+.switch-checkbox:checked + .switch-label .switch-button {
+    left: calc(100% - 0.5px);
+    transform: translateX(-100%);
+}
+
+.switch-label:active .switch-button {
+    width: 18px;
+}

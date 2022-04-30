@@ -1,0 +1,19 @@
+package com.example.analyzerneo4j.repository;
+
+import com.example.analyzerneo4j.entity.Class;
+import com.example.analyzerneo4j.entity.Interface;
+import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository;
+import org.springframework.data.neo4j.repository.query.Query;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
+
+public interface InterfaceRepository  extends ReactiveNeo4jRepository<Interface, Long> {
+    Mono<Interface> findInterfaceByName(String name);
+
+    @Query("MATCH (project: Project) WHERE $pid in project.pids " +
+            "MATCH (c: Interface {name: $name})-[:relates*1]-(target) " +
+            "RETURN target")
+    Flux<Class> findInterfaceByName(String name, Long pid, Long depth);
+}

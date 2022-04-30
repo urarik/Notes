@@ -1,0 +1,1511 @@
+class com.github.javaparser.ast.PackageDeclaration
+PackageDeclaration
+package com.example.analyzerneo4j.util;
+
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example.analyzerneo4j.util-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example.analyzerneo4j-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import com.example.analyzerneo4j.entity.Class;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example.analyzerneo4j.entity.Class-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example.analyzerneo4j.entity-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example.analyzerneo4j-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.example-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import com.github.javaparser.ast.ImportDeclaration;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast.ImportDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import com.github.javaparser.ast.NodeList;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast.NodeList-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import com.github.javaparser.ast.PackageDeclaration;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast.PackageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import com.github.javaparser.ast.expr.Name;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast.expr.Name-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast.expr-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser.ast-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github.javaparser-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com.github-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+com-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import java.util.*;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+java.util-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+java-----------------------------------
+
+class com.github.javaparser.ast.ImportDeclaration
+ImportDeclaration
+import java.util.stream.Collectors;
+-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+java.util.stream.Collectors-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+java.util.stream-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+java.util-----------------------------------
+
+class com.github.javaparser.ast.expr.Name
+Name
+java-----------------------------------
+
+class com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
+ClassOrInterfaceDeclaration
+public class TypeSolver {
+
+    private final Mapper mapper;
+
+    private final String packageString;
+
+    // import com.~~~.Class
+    private final Map<String, String> importMap;
+
+    // import com.~~~.*;
+    private final Set<String> stars;
+
+    public TypeSolver(Mapper mapper, PackageDeclaration packageDeclaration, NodeList<ImportDeclaration> importDeclarationList) {
+        this.mapper = mapper;
+        this.packageString = packageDeclaration.getNameAsString();
+        importMap = new HashMap<>();
+        stars = new HashSet<>();
+        importDeclarationList.stream().map(ImportDeclaration::getName).map(Name::asString).forEach(path -> {
+            String type = path.substring(path.lastIndexOf('.')) + 1;
+            if (type.equals("*"))
+                stars.add(path);
+            else
+                importMap.put(type, path);
+        });
+    }
+
+    public Optional<Class> findClass(String type) {
+        String path = importMap.get(type);
+        if (path != null) {
+            // import 문에 명시적으로 나와있는 경우
+            return Optional.of(mapper.classes.get(path));
+        } else {
+            // 같은 패키지
+            Class samePackage = mapper.classes.get(packageString + "." + type);
+            if (samePackage != null)
+                return Optional.of(samePackage);
+            // import * 검사
+            for (String star : stars) {
+                String newPath = star.substring(0, star.length() - 2) + "." + type;
+                Class diffPackage = mapper.classes.get(newPath);
+                if (diffPackage != null)
+                    return Optional.of(diffPackage);
+            }
+        }
+        // 사용자 작성 클래스가 아닌 경우
+        return Optional.empty();
+    }
+}-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+public -----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+TypeSolver-----------------------------------
+
+class com.github.javaparser.ast.body.FieldDeclaration
+FieldDeclaration
+private final Mapper mapper;-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+private -----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+final -----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+mapper-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.body.FieldDeclaration
+FieldDeclaration
+private final String packageString;-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+private -----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+final -----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+packageString-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+packageString-----------------------------------
+
+class com.github.javaparser.ast.body.FieldDeclaration
+FieldDeclaration
+// import com.~~~.Class
+private final Map<String, String> importMap;-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+private -----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+final -----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+importMap-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Map<String, String>-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Map-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+importMap-----------------------------------
+
+class com.github.javaparser.ast.body.FieldDeclaration
+FieldDeclaration
+// import com.~~~.*;
+private final Set<String> stars;-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+private -----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+final -----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+stars-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Set<String>-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Set-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+stars-----------------------------------
+
+class com.github.javaparser.ast.body.ConstructorDeclaration
+ConstructorDeclaration
+public TypeSolver(Mapper mapper, PackageDeclaration packageDeclaration, NodeList<ImportDeclaration> importDeclarationList) {
+    this.mapper = mapper;
+    this.packageString = packageDeclaration.getNameAsString();
+    importMap = new HashMap<>();
+    stars = new HashSet<>();
+    importDeclarationList.stream().map(ImportDeclaration::getName).map(Name::asString).forEach(path -> {
+        String type = path.substring(path.lastIndexOf('.')) + 1;
+        if (type.equals("*"))
+            stars.add(path);
+        else
+            importMap.put(type, path);
+    });
+}-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+public -----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+TypeSolver-----------------------------------
+
+class com.github.javaparser.ast.body.Parameter
+Parameter
+Mapper mapper-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.body.Parameter
+Parameter
+PackageDeclaration packageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+PackageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+PackageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+packageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.body.Parameter
+Parameter
+NodeList<ImportDeclaration> importDeclarationList-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+NodeList<ImportDeclaration>-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+NodeList-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+ImportDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+ImportDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+importDeclarationList-----------------------------------
+
+class com.github.javaparser.ast.stmt.BlockStmt
+BlockStmt
+{
+    this.mapper = mapper;
+    this.packageString = packageDeclaration.getNameAsString();
+    importMap = new HashMap<>();
+    stars = new HashSet<>();
+    importDeclarationList.stream().map(ImportDeclaration::getName).map(Name::asString).forEach(path -> {
+        String type = path.substring(path.lastIndexOf('.')) + 1;
+        if (type.equals("*"))
+            stars.add(path);
+        else
+            importMap.put(type, path);
+    });
+}-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+this.mapper = mapper;-----------------------------------
+
+class com.github.javaparser.ast.expr.AssignExpr
+AssignExpr
+this.mapper = mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.FieldAccessExpr
+FieldAccessExpr
+this.mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.ThisExpr
+ThisExpr
+this-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+this.packageString = packageDeclaration.getNameAsString();-----------------------------------
+
+class com.github.javaparser.ast.expr.AssignExpr
+AssignExpr
+this.packageString = packageDeclaration.getNameAsString()-----------------------------------
+
+class com.github.javaparser.ast.expr.FieldAccessExpr
+FieldAccessExpr
+this.packageString-----------------------------------
+
+class com.github.javaparser.ast.expr.ThisExpr
+ThisExpr
+this-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+packageString-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+packageDeclaration.getNameAsString()-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+packageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+packageDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+getNameAsString-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+importMap = new HashMap<>();-----------------------------------
+
+class com.github.javaparser.ast.expr.AssignExpr
+AssignExpr
+importMap = new HashMap<>()-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+importMap-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+importMap-----------------------------------
+
+class com.github.javaparser.ast.expr.ObjectCreationExpr
+ObjectCreationExpr
+new HashMap<>()-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+HashMap<>-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+HashMap-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+stars = new HashSet<>();-----------------------------------
+
+class com.github.javaparser.ast.expr.AssignExpr
+AssignExpr
+stars = new HashSet<>()-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+stars-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+stars-----------------------------------
+
+class com.github.javaparser.ast.expr.ObjectCreationExpr
+ObjectCreationExpr
+new HashSet<>()-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+HashSet<>-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+HashSet-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+importDeclarationList.stream().map(ImportDeclaration::getName).map(Name::asString).forEach(path -> {
+    String type = path.substring(path.lastIndexOf('.')) + 1;
+    if (type.equals("*"))
+        stars.add(path);
+    else
+        importMap.put(type, path);
+});-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+importDeclarationList.stream().map(ImportDeclaration::getName).map(Name::asString).forEach(path -> {
+    String type = path.substring(path.lastIndexOf('.')) + 1;
+    if (type.equals("*"))
+        stars.add(path);
+    else
+        importMap.put(type, path);
+})-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+importDeclarationList.stream().map(ImportDeclaration::getName).map(Name::asString)-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+importDeclarationList.stream().map(ImportDeclaration::getName)-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+importDeclarationList.stream()-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+importDeclarationList-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+importDeclarationList-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+stream-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+map-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodReferenceExpr
+MethodReferenceExpr
+ImportDeclaration::getName-----------------------------------
+
+class com.github.javaparser.ast.expr.TypeExpr
+TypeExpr
+ImportDeclaration-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+ImportDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+ImportDeclaration-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+map-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodReferenceExpr
+MethodReferenceExpr
+Name::asString-----------------------------------
+
+class com.github.javaparser.ast.expr.TypeExpr
+TypeExpr
+Name-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Name-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Name-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+forEach-----------------------------------
+
+class com.github.javaparser.ast.expr.LambdaExpr
+LambdaExpr
+path -> {
+    String type = path.substring(path.lastIndexOf('.')) + 1;
+    if (type.equals("*"))
+        stars.add(path);
+    else
+        importMap.put(type, path);
+}-----------------------------------
+
+class com.github.javaparser.ast.body.Parameter
+Parameter
+path-----------------------------------
+
+class com.github.javaparser.ast.type.UnknownType
+UnknownType
+-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.stmt.BlockStmt
+BlockStmt
+{
+    String type = path.substring(path.lastIndexOf('.')) + 1;
+    if (type.equals("*"))
+        stars.add(path);
+    else
+        importMap.put(type, path);
+}-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+String type = path.substring(path.lastIndexOf('.')) + 1;-----------------------------------
+
+class com.github.javaparser.ast.expr.VariableDeclarationExpr
+VariableDeclarationExpr
+String type = path.substring(path.lastIndexOf('.')) + 1-----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+type = path.substring(path.lastIndexOf('.')) + 1-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+path.substring(path.lastIndexOf('.')) + 1-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+path.substring(path.lastIndexOf('.'))-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+substring-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+path.lastIndexOf('.')-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+lastIndexOf-----------------------------------
+
+class com.github.javaparser.ast.expr.CharLiteralExpr
+CharLiteralExpr
+'.'-----------------------------------
+
+class com.github.javaparser.ast.expr.IntegerLiteralExpr
+IntegerLiteralExpr
+1-----------------------------------
+
+class com.github.javaparser.ast.stmt.IfStmt
+IfStmt
+if (type.equals("*"))
+    stars.add(path);
+else
+    importMap.put(type, path);-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+type.equals("*")-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+equals-----------------------------------
+
+class com.github.javaparser.ast.expr.StringLiteralExpr
+StringLiteralExpr
+"*"-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+stars.add(path);-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+stars.add(path)-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+stars-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+stars-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+add-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+importMap.put(type, path);-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+importMap.put(type, path)-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+importMap-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+importMap-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+put-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.body.MethodDeclaration
+MethodDeclaration
+public Optional<Class> findClass(String type) {
+    String path = importMap.get(type);
+    if (path != null) {
+        // import 문에 명시적으로 나와있는 경우
+        return Optional.of(mapper.classes.get(path));
+    } else {
+        // 같은 패키지
+        Class samePackage = mapper.classes.get(packageString + "." + type);
+        if (samePackage != null)
+            return Optional.of(samePackage);
+        // import * 검사
+        for (String star : stars) {
+            String newPath = star.substring(0, star.length() - 2) + "." + type;
+            Class diffPackage = mapper.classes.get(newPath);
+            if (diffPackage != null)
+                return Optional.of(diffPackage);
+        }
+    }
+    // 사용자 작성 클래스가 아닌 경우
+    return Optional.empty();
+}-----------------------------------
+
+class com.github.javaparser.ast.Modifier
+Modifier
+public -----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+findClass-----------------------------------
+
+class com.github.javaparser.ast.body.Parameter
+Parameter
+String type-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Optional<Class>-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Optional-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Class-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Class-----------------------------------
+
+class com.github.javaparser.ast.stmt.BlockStmt
+BlockStmt
+{
+    String path = importMap.get(type);
+    if (path != null) {
+        // import 문에 명시적으로 나와있는 경우
+        return Optional.of(mapper.classes.get(path));
+    } else {
+        // 같은 패키지
+        Class samePackage = mapper.classes.get(packageString + "." + type);
+        if (samePackage != null)
+            return Optional.of(samePackage);
+        // import * 검사
+        for (String star : stars) {
+            String newPath = star.substring(0, star.length() - 2) + "." + type;
+            Class diffPackage = mapper.classes.get(newPath);
+            if (diffPackage != null)
+                return Optional.of(diffPackage);
+        }
+    }
+    // 사용자 작성 클래스가 아닌 경우
+    return Optional.empty();
+}-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+String path = importMap.get(type);-----------------------------------
+
+class com.github.javaparser.ast.expr.VariableDeclarationExpr
+VariableDeclarationExpr
+String path = importMap.get(type)-----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+path = importMap.get(type)-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+importMap.get(type)-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+importMap-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+importMap-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+get-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.stmt.IfStmt
+IfStmt
+if (path != null) {
+    // import 문에 명시적으로 나와있는 경우
+    return Optional.of(mapper.classes.get(path));
+} else {
+    // 같은 패키지
+    Class samePackage = mapper.classes.get(packageString + "." + type);
+    if (samePackage != null)
+        return Optional.of(samePackage);
+    // import * 검사
+    for (String star : stars) {
+        String newPath = star.substring(0, star.length() - 2) + "." + type;
+        Class diffPackage = mapper.classes.get(newPath);
+        if (diffPackage != null)
+            return Optional.of(diffPackage);
+    }
+}-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+path != null-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.NullLiteralExpr
+NullLiteralExpr
+null-----------------------------------
+
+class com.github.javaparser.ast.stmt.BlockStmt
+BlockStmt
+{
+    // import 문에 명시적으로 나와있는 경우
+    return Optional.of(mapper.classes.get(path));
+}-----------------------------------
+
+class com.github.javaparser.ast.stmt.ReturnStmt
+ReturnStmt
+// import 문에 명시적으로 나와있는 경우
+return Optional.of(mapper.classes.get(path));-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+Optional.of(mapper.classes.get(path))-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+of-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+mapper.classes.get(path)-----------------------------------
+
+class com.github.javaparser.ast.expr.FieldAccessExpr
+FieldAccessExpr
+mapper.classes-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+classes-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+get-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+path-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+path-----------------------------------
+
+class com.github.javaparser.ast.stmt.BlockStmt
+BlockStmt
+{
+    // 같은 패키지
+    Class samePackage = mapper.classes.get(packageString + "." + type);
+    if (samePackage != null)
+        return Optional.of(samePackage);
+    // import * 검사
+    for (String star : stars) {
+        String newPath = star.substring(0, star.length() - 2) + "." + type;
+        Class diffPackage = mapper.classes.get(newPath);
+        if (diffPackage != null)
+            return Optional.of(diffPackage);
+    }
+}-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+// 같은 패키지
+Class samePackage = mapper.classes.get(packageString + "." + type);-----------------------------------
+
+class com.github.javaparser.ast.expr.VariableDeclarationExpr
+VariableDeclarationExpr
+Class samePackage = mapper.classes.get(packageString + "." + type)-----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+samePackage = mapper.classes.get(packageString + "." + type)-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Class-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Class-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+samePackage-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+mapper.classes.get(packageString + "." + type)-----------------------------------
+
+class com.github.javaparser.ast.expr.FieldAccessExpr
+FieldAccessExpr
+mapper.classes-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+classes-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+get-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+packageString + "." + type-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+packageString + "."-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+packageString-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+packageString-----------------------------------
+
+class com.github.javaparser.ast.expr.StringLiteralExpr
+StringLiteralExpr
+"."-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.stmt.IfStmt
+IfStmt
+if (samePackage != null)
+    return Optional.of(samePackage);-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+samePackage != null-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+samePackage-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+samePackage-----------------------------------
+
+class com.github.javaparser.ast.expr.NullLiteralExpr
+NullLiteralExpr
+null-----------------------------------
+
+class com.github.javaparser.ast.stmt.ReturnStmt
+ReturnStmt
+return Optional.of(samePackage);-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+Optional.of(samePackage)-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+of-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+samePackage-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+samePackage-----------------------------------
+
+class com.github.javaparser.ast.stmt.ForEachStmt
+ForEachStmt
+// import * 검사
+for (String star : stars) {
+    String newPath = star.substring(0, star.length() - 2) + "." + type;
+    Class diffPackage = mapper.classes.get(newPath);
+    if (diffPackage != null)
+        return Optional.of(diffPackage);
+}-----------------------------------
+
+class com.github.javaparser.ast.expr.VariableDeclarationExpr
+VariableDeclarationExpr
+String star-----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+star-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+star-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+stars-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+stars-----------------------------------
+
+class com.github.javaparser.ast.stmt.BlockStmt
+BlockStmt
+{
+    String newPath = star.substring(0, star.length() - 2) + "." + type;
+    Class diffPackage = mapper.classes.get(newPath);
+    if (diffPackage != null)
+        return Optional.of(diffPackage);
+}-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+String newPath = star.substring(0, star.length() - 2) + "." + type;-----------------------------------
+
+class com.github.javaparser.ast.expr.VariableDeclarationExpr
+VariableDeclarationExpr
+String newPath = star.substring(0, star.length() - 2) + "." + type-----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+newPath = star.substring(0, star.length() - 2) + "." + type-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+String-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+newPath-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+star.substring(0, star.length() - 2) + "." + type-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+star.substring(0, star.length() - 2) + "."-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+star.substring(0, star.length() - 2)-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+star-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+star-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+substring-----------------------------------
+
+class com.github.javaparser.ast.expr.IntegerLiteralExpr
+IntegerLiteralExpr
+0-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+star.length() - 2-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+star.length()-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+star-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+star-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+length-----------------------------------
+
+class com.github.javaparser.ast.expr.IntegerLiteralExpr
+IntegerLiteralExpr
+2-----------------------------------
+
+class com.github.javaparser.ast.expr.StringLiteralExpr
+StringLiteralExpr
+"."-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+type-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+type-----------------------------------
+
+class com.github.javaparser.ast.stmt.ExpressionStmt
+ExpressionStmt
+Class diffPackage = mapper.classes.get(newPath);-----------------------------------
+
+class com.github.javaparser.ast.expr.VariableDeclarationExpr
+VariableDeclarationExpr
+Class diffPackage = mapper.classes.get(newPath)-----------------------------------
+
+class com.github.javaparser.ast.body.VariableDeclarator
+VariableDeclarator
+diffPackage = mapper.classes.get(newPath)-----------------------------------
+
+class com.github.javaparser.ast.type.ClassOrInterfaceType
+ClassOrInterfaceType
+Class-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Class-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+diffPackage-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+mapper.classes.get(newPath)-----------------------------------
+
+class com.github.javaparser.ast.expr.FieldAccessExpr
+FieldAccessExpr
+mapper.classes-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+mapper-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+classes-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+get-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+newPath-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+newPath-----------------------------------
+
+class com.github.javaparser.ast.stmt.IfStmt
+IfStmt
+if (diffPackage != null)
+    return Optional.of(diffPackage);-----------------------------------
+
+class com.github.javaparser.ast.expr.BinaryExpr
+BinaryExpr
+diffPackage != null-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+diffPackage-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+diffPackage-----------------------------------
+
+class com.github.javaparser.ast.expr.NullLiteralExpr
+NullLiteralExpr
+null-----------------------------------
+
+class com.github.javaparser.ast.stmt.ReturnStmt
+ReturnStmt
+return Optional.of(diffPackage);-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+Optional.of(diffPackage)-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+of-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+diffPackage-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+diffPackage-----------------------------------
+
+class com.github.javaparser.ast.stmt.ReturnStmt
+ReturnStmt
+// 사용자 작성 클래스가 아닌 경우
+return Optional.empty();-----------------------------------
+
+class com.github.javaparser.ast.expr.MethodCallExpr
+MethodCallExpr
+Optional.empty()-----------------------------------
+
+class com.github.javaparser.ast.expr.NameExpr
+NameExpr
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+Optional-----------------------------------
+
+class com.github.javaparser.ast.expr.SimpleName
+SimpleName
+empty-----------------------------------
+

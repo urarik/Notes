@@ -1,0 +1,105 @@
+.note-block {
+    /* relative는 switch의 position:absolute를 위함 */
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.note-block-content {
+    display: flex;
+    flex-direction: row;
+    padding: 8px 8px;
+    margin-bottom: 16px;
+}
+
+.note-block-content-active {
+    box-shadow: 1px 4px 4px 1px #888888;
+}
+
+.note-block-revise {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: large;
+
+    resize: none;
+    overflow: hidden;
+}
+
+.note-block-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 16px;
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+.note-block-container .header {
+    position: relative;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+}
+
+.note-block-container .header .title {
+    margin-bottom: 16px;
+    font-size: 36px;
+}
+.note-block-container .header .add-block-button {
+    position: absolute;
+    right: 16px;
+    top: 24px;
+    font-size: 1.5em;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: var(--tran-02);
+}
+.note-block-container .header .add-block-button:hover {
+    background-color: #BEC9E5;
+}
+
+.note-block-container .note-block-list {
+    width: 100%;
+}
+
+.note-block .note-block-content {
+    width: 100%;
+}
+
+.option-container {
+    position: absolute;
+    top: -12px;
+    right: 0px;
+    line-height: 0;
+
+    display: flex;
+    align-items: center;
+}
+
+.option-container .delete-note-button {
+    margin-left: 8px;
+    margin-bottom: 4px;
+    width: 20px;
+    height: 20px;
+    font-size: 1em;    
+    transition: var(--tran-02) background-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.option-container .delete-note-button:hover {
+    background-color:#BEC9E5;
+    border-radius: 20px;
+}
