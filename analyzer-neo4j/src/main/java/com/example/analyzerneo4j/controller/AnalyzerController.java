@@ -2,6 +2,8 @@ package com.example.analyzerneo4j.controller;
 
 import com.example.analyzerneo4j.controller.dto.AnalyzeRequest;
 import com.example.analyzerneo4j.service.AnalyzerService;
+import org.apache.coyote.Response;
+import org.json.JSONObject;
 import org.neo4j.driver.types.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,10 +50,34 @@ public class AnalyzerController {
     }
 
     @GetMapping("/entities")
-    public ResponseEntity<String> getEntities(
+    public ResponseEntity<String> getEntitiesByPackage(
             @RequestParam Long pid,
             @RequestParam Long packageId) {
         var result = analyzerService.getClassAndInterface(pid, packageId);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/entity")
+    public ResponseEntity<Map<Long, String>> getEntityInIds(
+            @RequestParam List<Long> eids,
+            @RequestParam Long pid
+    ) {
+        return ResponseEntity.ok(analyzerService.findEntityInIds(eids, pid));
+    }
+
+    @GetMapping("/methods")
+    public ResponseEntity<Map<Long, List<String>>> getMethods(
+            @RequestParam List<Long> cids,
+            @RequestParam Long pid
+    ) {
+        return ResponseEntity.ok(analyzerService.findMethodListInIds(cids, pid));
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<Map<Long, List<String>>> getMembers(
+            @RequestParam List<Long> cids,
+            @RequestParam Long pid
+    ) {
+        return ResponseEntity.ok(analyzerService.findMemberListInIds(cids, pid));
     }
 }

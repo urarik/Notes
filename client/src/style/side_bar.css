@@ -184,5 +184,5 @@ header .image-text .header-text {
 
 .home.closed {
     left: 88px;
-    width: 100%;
+    width: calc(100% - 88px);
 }

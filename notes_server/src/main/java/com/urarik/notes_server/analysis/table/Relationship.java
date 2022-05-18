@@ -1,15 +1,13 @@
 package com.urarik.notes_server.analysis.table;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.persistence.Entity;
 
 @Entity
-@Table(name="ENTITY")
+@Table(name="RELATIONSHIP")
 public class Relationship {
     @Id
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "id")
     private Long id;
 
     @Column
@@ -17,7 +15,7 @@ public class Relationship {
     @Column
     Long toId;
     @Column
-    Long order;
+    Long theOrder;
     @Column
     Long size;
     @Column
@@ -26,6 +24,10 @@ public class Relationship {
     Double height;
     @Column
     Double edgeWidth;
+
+    public Relationship() {
+    }
+
 
     public Long getId() {
         return id;
@@ -51,12 +53,12 @@ public class Relationship {
         this.toId = toId;
     }
 
-    public Long getOrder() {
-        return order;
+    public Long getTheOrder() {
+        return theOrder;
     }
 
-    public void setOrder(Long order) {
-        this.order = order;
+    public void setTheOrder(Long theOrder) {
+        this.theOrder = theOrder;
     }
 
     public Long getSize() {

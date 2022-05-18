@@ -1,0 +1,129 @@
+.module-sidebar {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 12%;
+    height: 100%;
+    overflow-y: scroll;
+    background-color: var(--primary-color-light);
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.module-sidebar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+.module-sidebar .module-header {
+    margin-top: 20px;
+    font-size: 20px;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.module-sidebar .packageEntity {
+    margin-top: 8px;
+    height: 32px;
+    width: 100%;
+    text-overflow: ellipsis;
+    line-height: 32px;
+    padding-left: 8px;
+    font-size: 14px;
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+
+    display: flex;
+    align-items: center;
+}
+
+.module-sidebar .packageEntity:hover {
+    background-color: var(--body-color);
+}
+.module-sidebar .packageEntity .unfold {
+    font-size: 1px;
+    transition: var(--tran-02);
+}
+.module-sidebar .packageEntity .unfolding {
+    font-size: 1px;
+    transform: rotate(90deg);
+}
+
+.module-sidebar .packageEntity .path {
+    padding-left: 4px;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.module-sidebar .classEntity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 13px;
+    padding-left: 16px;
+    padding-right: 16px;
+    text-overflow: ellipsis;
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+}
+.module-sidebar .classEntity:hover {
+    background-color: var(--body-color);
+}
+.module-sidebar .classEntity i {
+    text-align: center;
+    line-height: 16px;
+    width: 16px; height: 16px;
+    border-radius: 12px;
+    transition: var(--tran-02);
+}
+.module-sidebar .classEntity i:hover {
+    background-color: var(--primary-color-light);
+}
+
+
+/* 833%는 부모의 부모와 width를 같게 하기 위함 */
+/* 부모의 width 12%.  100%(width) : 12%(부모의 부모 기준) = x% : 100% */
+.codeview-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: calc(833%);
+    min-height: 100vh;
+    background-color: rgb(128, 128, 128, 0.5);
+}
+
+.codeview-container .codeview {
+    position: relative;
+    margin: 32px auto;
+    padding: 32px;
+    width: 800px;
+    height: 820px;
+    background-color: var(--body-color);
+    opacity: 1.0 !important;
+    z-index: 100;
+}
+
+.codeview-container .codeview .name {
+    text-align: center;
+    font-size: 24px;
+}
+
+.codeview-container .codeview .close-button {
+    position: absolute;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    line-height: 24px;
+    text-align: center;
+    top: 40px;
+    right: 36px;
+}
+
+.codeview-container .codeview .close-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+}

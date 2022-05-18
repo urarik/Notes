@@ -1,12 +1,16 @@
 package com.urarik.notes_server.analysis;
 
-import com.urarik.notes_server.analysis.dto.AnalysisService;
 import com.urarik.notes_server.analysis.dto.AnalyzeRequest;
+import com.urarik.notes_server.analysis.table.Plane;
+import com.urarik.notes_server.security.UserInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 @RestController
@@ -14,10 +18,18 @@ import java.util.Map;
 public class AnalysisController {
     private final AnalysisService analysisService;
     private final WebClient webClient = WebClient.create("http://localhost:8888");
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final UserInfo userInfo;
 
-
-    public AnalysisController(AnalysisService analysisService) {
+    public AnalysisController(AnalysisService analysisService, UserInfo userInfo) {
         this.analysisService = analysisService;
+        this.userInfo = userInfo;
+    }
+
+    @GetMapping("/code")
+    public ResponseEntity<String> getCode(@RequestParam String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        return ResponseEntity.ok(restTemplate.getForEntity(uri, String.class).getBody());
     }
 
     @PostMapping
@@ -73,4 +85,21 @@ public class AnalysisController {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+
+    @GetMapping("/classdiagram")
+    public ResponseEntity<Map<Object, Object>> getClassDiagram(
+            @RequestParam Long pid,
+            @RequestParam Long planeId) throws IllegalAccessException {
+        var temp = analysisService.getClassDiagram(pid, planeId, userInfo.getUsername());
+
+        return ResponseEntity.ok(temp);
+    }
+
+    @PostMapping(value = "/classdiagram/save")
+    public ResponseEntity<Object> createClassDiagram(@RequestBody Plane plane) {
+        analysisService.createPlane(plane);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

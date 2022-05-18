@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import SideBar from "../components/side_bar";
 import ProjectNotes from "./NoteList";
 import Note from "./Note";
+import ClassDiagram from "../components/analysis_modules/classdiagram/ClassDiagram";
 import { Route, Routes} from 'react-router-dom';
 import ProjectSetting from "../components/ProjectSetting";
 import { fetchProject } from "../actions";
@@ -33,6 +34,7 @@ export default function(props) {
                     <Routes>
                         <Route path={`main`} element={<Note />} />
                         <Route path={`notes`} element={<ProjectNotes />} />
+                        <Route path={`classdiagram`} element={<ClassDiagram />}/>
                         <Route path={`setting`} element={<ProjectSetting />} />
                         <Route path={`note/new`} element={<NoteNew />}/>
                     </Routes>

@@ -7,6 +7,8 @@
 @import "notelist.css";
 @import "switch.css";
 @import "msg.css";
+@import "modules.css";
+@import "classdiagram.css";
 
 :root {
     --body-color: #E4E9F7;
@@ -20,6 +22,11 @@
     --tran-03: all 0.3s ease;
     --tran-04: all 0.4s ease;
     --tran-05: all 0.5s ease;
+}
+
+.full{
+    width: 100%;
+    height: 100%;
 }
 
 .nopadding {
@@ -118,4 +125,18 @@
     display: flex;
     justify-content: center;
     width: 800px;
+}
+
+.hiding {
+    display: none;
+}
+
+.under-line {
+    text-decoration: underline;
+}
+.italic {
+    font-style: italic;
+}
+.text-center {
+    text-align: center;
 }

@@ -1,14 +1,12 @@
 package com.urarik.notes_server.analysis.table;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @javax.persistence.Entity
 @Table(name="ENTITY")
 public class Entity {
     @Id
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "id")
     private Long id;
 
     @Column
@@ -21,6 +19,10 @@ public class Entity {
     Double absH;
     @Column
     Double fontSize;
+
+    public Entity() {
+    }
+
 
     public Long getId() {
         return id;

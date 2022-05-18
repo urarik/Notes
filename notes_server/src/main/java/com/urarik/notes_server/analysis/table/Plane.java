@@ -1,15 +1,15 @@
 package com.urarik.notes_server.analysis.table;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @javax.persistence.Entity
 @Table(name="PLANE")
 public class Plane {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
-
 
     @Column
     Long pid;
@@ -25,11 +25,17 @@ public class Plane {
     Double containerW;
     @Column
     Double containerH;
+    @Column
+    String name;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    List<Entity> entityList;
-    @OneToMany(fetch = FetchType.EAGER)
-    List<Relationship> relationshipList;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "plane_id")
+    Set<Entity> entitySet;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "plane_id")
+    Set<Relationship> relationshipSet;
+
+    public Plane() {}
 
     public Long getId() {
         return id;
@@ -95,19 +101,27 @@ public class Plane {
         this.containerH = containerH;
     }
 
-    public List<Entity> getEntityList() {
-        return entityList;
+    public String getName() {
+        return name;
     }
 
-    public void setEntityList(List<Entity> entityList) {
-        this.entityList = entityList;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Relationship> getRelationshipList() {
-        return relationshipList;
+    public Set<Entity> getEntitySet() {
+        return entitySet;
     }
 
-    public void setRelationshipList(List<Relationship> relationshipList) {
-        this.relationshipList = relationshipList;
+    public void setEntitySet(Set<Entity> entitySet) {
+        this.entitySet = entitySet;
+    }
+
+    public Set<Relationship> getRelationshipSet() {
+        return relationshipSet;
+    }
+
+    public void setRelationshipSet(Set<Relationship> relationshipSet) {
+        this.relationshipSet = relationshipSet;
     }
 }

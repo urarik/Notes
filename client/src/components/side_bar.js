@@ -72,7 +72,7 @@ export default function({id, setCloseMain}) {
                             </NavLink>
                         </li>
                         <li className='nav-link' style={{padding: 0}}>
-                            <NavLink to={`/project/${id}/module1`} >
+                            <NavLink to={`/project/${id}/classdiagram`} >
                                 <i className='bx bx-check-square icon' ></i>
                                 <span className='text nav-text'>Module 1</span>
                             </NavLink>

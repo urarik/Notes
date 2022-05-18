@@ -11,6 +11,12 @@ export const DELETE_BLOCK = "delete_block";
 export const ADD_BLOCK = "add_block";
 export const UPDATE_BLOCK = "update_block";
 
+export const ACTIVE_CLASS = "active_class";
+
+export const ACTIVE_RESIZING = "active_resizing";
+export const ACTIVE_MOVING = "active_moving";
+export const ACTIVE_POINT = "active_point";
+
 export function fetchNote(id) {
     const note = [
         {
@@ -82,4 +88,32 @@ export function updateBlock(block) {
         type: UPDATE_BLOCK,
         payload: block
     }
+}
+
+export function activeClass(classEntity) {
+    return {
+        type: ACTIVE_CLASS,
+        payload: classEntity
+    }
+}
+
+export function activeResizing(id) {
+    return {
+        type: ACTIVE_RESIZING,
+        payload: id
+    };
+}
+
+export function activeMoving(id) {
+    return {
+        type: ACTIVE_MOVING,
+        payload: id
+    };
+}
+
+export function activePoint(point) {
+    return {
+        type: ACTIVE_POINT,
+        payload: point
+    };
 }

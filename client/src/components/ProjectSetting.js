@@ -123,6 +123,21 @@ export default function(props) {
     const inviteHandleSubmit = handleInvitationSubmit('messages/invite', 'userNames');
     const grantHandleSubmit = handleInvitationSubmit('projects/update/add/roles', 'admins');
 
+    const processGithub = async (e) => {
+        e.preventDefault();
+
+        try{
+            const response = await post(`analyze`, {
+              pid: project.pid, 
+              link: e.target[0].value
+            });
+            if(response.status == 200) {
+                setSuccess(true);
+            } else setFail(response);
+          } catch(error) {
+            setFail(error);
+          }
+    }
 
     return (
         <div className="setting pt-5">
@@ -148,6 +163,13 @@ export default function(props) {
                     <button className="mt-3 btn btn-sm btn-primary btn-block" onClick={() => openModal(false)}>Grant permission</button>
                     <button className="mt-3 btn btn-sm btn-primary btn-block" onClick={() => openModal(true)}>Invite</button>
 
+                    <hr />
+                    <div className="text-center form-div">
+                        <form className="form-container" onSubmit={e => processGithub(e)}>
+                            <input placeholder="Github Repository Link" className="form-control"></input>
+                            <input type="submit" className="mt-3 btn btn-sm btn-primary btn-block" name="Submit"></input>
+                        </form>
+                    </div>
                     </div>
                 )
             }

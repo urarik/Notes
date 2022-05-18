@@ -103,7 +103,7 @@ public class NameCollector extends VoidVisitorAdapter<Void> {
         String modifier;
         NodeList<Modifier> modifierList = fd.getModifiers();
         if(modifierList.isEmpty()) modifier = "package-private";
-        else modifier = modifierList.get(0).toString();
+        else modifier = modifierList.get(0).toString().trim();
 
         if(!(fd.getParentNode().get() instanceof ClassOrInterfaceDeclaration)) return;
         ClassOrInterfaceDeclaration parentDeclaration = (ClassOrInterfaceDeclaration) fd.getParentNode().get();
@@ -120,7 +120,7 @@ public class NameCollector extends VoidVisitorAdapter<Void> {
         String modifier;
         NodeList<Modifier> modifierList = md.getModifiers();
         if(modifierList.isEmpty()) modifier = "package-private";
-        else modifier = modifierList.get(0).toString();
+        else modifier = modifierList.get(0).toString().trim();
 
         // 익명 클래스인 경우는 제외 (e.g. getNid() in NoteServiceTest.java )
         if(!(md.getParentNode().get() instanceof ClassOrInterfaceDeclaration)) return;

@@ -1,8 +1,12 @@
 package com.urarik.notes_server.analysis;
 
-import java.util.List;
+import org.json.JSONObject;
 
-public interface ClassDiagramInterface {
-    List<List<Object>> findMethodListInIds(List<Long> cid);
-    List<List<Object>> findMemberListInIds(List<Long> cid);
+import java.util.List;
+import java.util.Map;
+
+public interface ClassDiagramRepository {
+    Map<String, List<JSONObject>> findMethodMapInIds(List<Long> cid, Long pid);
+    Map<String, List<JSONObject>> findMemberMapInIds(List<Long> cid, Long pid);
+    Map<String, JSONObject> findEntityMapInIds(List<Long> eidList, Long pid);
 }

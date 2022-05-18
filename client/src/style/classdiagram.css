@@ -1,0 +1,178 @@
+.classdiagram-container {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.classdiagram-container .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 0;
+    height: 52px;
+    background-color: var(--toggle-color);
+    padding-left: 16px;
+
+    line-height: 52px;
+}
+
+.classdiagram-container .classdiagram-content {
+    position: absolute;
+    left: 12%;
+    right: 0;
+    bottom: 0;
+    top: 52px;
+}
+
+.classdiagram-container .header .analysis-container {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.classdiagram-container .header .analysis {
+    height: 32px;
+    line-height: 0;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.classdiagram-container .header .class-input {
+    width: 160px;
+    height: 24px;
+    line-height: 24px;
+    text-overflow: ellipsis;
+}
+
+.classdiagram-container .header .name-input {
+    height: 32px;
+    width: 240px;
+}
+
+.classdiagram-container .header .depth-input {
+    height: 24px;
+    width: 32px;
+    text-align: center;
+}
+
+.classdiagram-container input::-webkit-outer-spin-button,
+.classdiagram-container input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.classdiagram-container input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+.classdiagram-content {
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* -------------------------------Entity-------------------------------------- */
+
+.entity {
+    background-color: var(--primary-color-light);
+    border: 0.5px solid black;
+    -webkit-box-shadow: 9px 8px 5px -5px rgba(105,105,105,0.52); 
+    box-shadow: 9px 8px 5px -5px rgba(105,105,105,0.52);
+    
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.entity:hover {
+    -webkit-box-shadow: 9px 10px 8px -5px rgba(105,105,105,0.52); 
+    box-shadow: 9px 8px 10px -5px rgba(105,105,105,0.52);
+}
+
+.dragging {
+	cursor: move !important; /* fallback: no `url()` support or images disabled */
+	cursor: -webkit-grabbing !important; /* Chrome 1-21, Safari 4+ */
+	cursor:    -moz-grabbing !important; /* Firefox 1.5-26 */
+	cursor:         grabbing !important; /* W3C standards syntax, should come least */
+}
+
+.entity .name {
+    text-align: center;
+    font-weight: 500;
+
+    text-overflow: ellipsis;
+
+    -webkit-user-select:none; 
+    -moz-user-select:none; 
+    -ms-user-select:none; 
+    user-select:none;
+}
+
+.entity .line {
+    margin: 2px 0px;
+    border: 0;
+}
+
+.entity .contents {
+    margin-left: 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    -webkit-user-select:none; 
+    -moz-user-select:none; 
+    -ms-user-select:none; 
+    user-select:none;
+}
+
+.entity .empty-content {
+    height: 14px;
+}
+
+.classdiagram-content .adjust {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 64px;
+    height: 24px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.classdiagram-content .zoom-button {
+    width: 28px;
+    height: 20px;
+    color: var(--primary-color);
+    background-color: var(--toggle-color);
+
+    text-align: center;
+    line-height: 20px;
+
+    cursor: pointer;
+}
+.classdiagram-content .zoom-button:hover {
+    background-color: var(--primary-color-light);
+}
+.classdiagram-content .relationship.general {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+}
+
+.classdiagram-content .relationship.dashed {
+    border: none;
+    border-top: 2px dashed black;
+    width: 100%;
+    height: 100%;
+}
+
+.relationship-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

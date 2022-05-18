@@ -45,18 +45,22 @@ public class AnalyzerService {
 
     public String getEntityForClassDiagram(Long pid, Long cid, Long depth) {
         JSONObject json = new JSONObject();
-        List<List<JSONObject>> entityResult = new ArrayList<>();
+        List<Map<String, Object>> entityResult = new ArrayList<>();
         List<JSONObject> relationshipResult = new ArrayList<>();
         // parallel true?
         StreamSupport.stream(classDiagramRepository.findByIdAndDepth(cid, pid, depth).spliterator(), false)
                 .forEach(node -> {
-                    List<JSONObject> list = new ArrayList<>();
-                    list.add(nodeToJSON(node));
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("Entity", nodeToJSON(node));
+                    List<JSONObject> members = new ArrayList<>();
+                    List<JSONObject> methods = new ArrayList<>();
+                    map.put("Methods", methods);
+                    map.put("Members", members);
                     classDiagramRepository.findMethodByName(node.id(), pid).forEach(
-                            method -> list.add(nodeToJSON(method)));
+                            method -> methods.add(mapToJSON((Map<Object, Object>) method)));
                     classDiagramRepository.findMemberByName(node.id(), pid).forEach(
-                            member -> list.add(nodeToJSON(member)));
-                    entityResult.add(list);
+                            member -> members.add(mapToJSON((Map<Object, Object>) member)));
+                    entityResult.add(map);
                 });
 
         classDiagramRepository.findClassRelationshipById(cid, pid, depth).forEach(rel ->
@@ -72,6 +76,36 @@ public class AnalyzerService {
     }
     public String getClassAndInterface(Long pid, Long packageId) {
         return getNodeList(()-> listRepository.findClassAndInterface(pid, packageId).spliterator(), "entities");
+    }
+
+    public Map<Long, String> findEntityInIds(List<Long> eidList, Long pid) {
+        Map<Long, String> entities = new HashMap<>();
+        eidList.forEach(eid ->
+                entities.put(eid,
+                        stringMapToJSON(classDiagramRepository.findEntityById(pid, eid)).toString()));
+        return entities;
+    }
+
+    public Map<Long, List<String>> findMethodListInIds(List<Long> cidList, Long pid) {
+        Map<Long, List<String>> methodss = new HashMap<>();
+        cidList.forEach(cid -> {
+            List<String> methods = new ArrayList<>();
+            classDiagramRepository.findMethodByName(cid, pid).forEach(
+                    method -> methods.add(mapToJSON((Map<Object, Object>) method).toString()));
+            methodss.put(cid, methods);
+        });
+        return methodss;
+    }
+
+    public Map<Long, List<String>> findMemberListInIds(List<Long> cidList, Long pid) {
+        Map<Long, List<String>> memberss = new HashMap<>();
+        cidList.forEach(cid -> {
+            List<String> members = new ArrayList<>();
+            classDiagramRepository.findMemberByName(cid, pid).forEach(
+                    member -> members.add(mapToJSON((Map<Object, Object>) member).toString()));
+            memberss.put(cid, members);
+        });
+        return memberss;
     }
 
     private String getNodeList(Supplier<Spliterator<org.neo4j.driver.types.Node>> supplier, String name) {
@@ -91,6 +125,17 @@ public class AnalyzerService {
                 .put("label", node.labels())
                 .put("properties", node.asMap());
     }
+    private JSONObject mapToJSON(Map<Object, Object> map) {
+        JSONObject jsonObject = new JSONObject();
+        map.forEach((key, value) -> jsonObject.put((String) key, value));
+        return jsonObject;
+    }
+    private JSONObject stringMapToJSON(Map<String, Object> map) {
+        JSONObject jsonObject = new JSONObject();
+        map.forEach(jsonObject::put);
+        return jsonObject;
+    }
+
     private JSONObject relationshipToJSON(Relationship relationship) {
         return new JSONObject()
                 .put("start", relationship.startNodeId())
@@ -119,6 +164,7 @@ public class AnalyzerService {
             return project;
         } else {
             project.getPids().add(pid);
+            entityContainer.projectRepository.save(project).subscribe();
             return null;
         }
     }
