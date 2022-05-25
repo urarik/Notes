@@ -12,4 +12,8 @@ Note web application for static java code analysis
 <img src="images/invite.png" />
 
 ### 코드 분석
-TODO
+#### Class diagram
+<img src="images/classdiagram.gif" />
+#### Sequence diagram
+<img src="images/sequencediagram.gif" />
+<img src="images/sequencediagram2.gif" />
