@@ -13,9 +13,13 @@ export const UPDATE_BLOCK = "update_block";
 
 export const ACTIVE_CLASS = "active_class";
 
-export const ACTIVE_RESIZING = "active_resizing";
-export const ACTIVE_MOVING = "active_moving";
-export const ACTIVE_POINT = "active_point";
+export const ACTIVE_CD_RESIZING = "active_cd_resizing";
+export const ACTIVE_CD_MOVING = "active_cd_moving";
+export const ACTIVE_CD_POINT = "active_cd_point";
+
+export const ACTIVE_SD_RESIZING = "active_sd_resizing";
+export const ACTIVE_SD_MOVING = "active_sd_moving";
+export const ACTIVE_SD_POINT = "active_sd_point";
 
 export function fetchNote(id) {
     const note = [
@@ -97,23 +101,44 @@ export function activeClass(classEntity) {
     }
 }
 
-export function activeResizing(id) {
+export function activeCdResizing(id) {
     return {
-        type: ACTIVE_RESIZING,
+        type: ACTIVE_CD_RESIZING,
         payload: id
     };
 }
 
-export function activeMoving(id) {
+export function activeCdMoving(id) {
     return {
-        type: ACTIVE_MOVING,
+        type: ACTIVE_CD_MOVING,
         payload: id
     };
 }
 
-export function activePoint(point) {
+export function activeCdPoint(point) {
     return {
-        type: ACTIVE_POINT,
+        type: ACTIVE_CD_POINT,
+        payload: point
+    };
+}
+
+export function activeSdResizing(id) {
+    return {
+        type: ACTIVE_SD_RESIZING,
+        payload: id
+    };
+}
+
+export function activeSdMoving(id) {
+    return {
+        type: ACTIVE_SD_MOVING,
+        payload: id
+    };
+}
+
+export function activeSdPoint(point) {
+    return {
+        type: ACTIVE_SD_POINT,
         payload: point
     };
 }

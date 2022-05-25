@@ -7,6 +7,10 @@ import javax.persistence.Entity;
 @Table(name="RELATIONSHIP")
 public class Relationship {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
+    private Long _id;
+
     @Column(nullable = false, updatable = false, name = "id")
     private Long id;
 

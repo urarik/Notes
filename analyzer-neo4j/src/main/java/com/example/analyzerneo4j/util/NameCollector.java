@@ -129,6 +129,14 @@ public class NameCollector extends VoidVisitorAdapter<Void> {
         String name = md.getNameAsString();
 
         Method method = new Method(modifier, name, md.isStatic());
+        method.getInvokes().add(
+                new MethodRelationship(
+                        0L,
+                        null,
+                        null,
+                        method
+                )
+        );
 
         Map<String, Method> map = mapper.methods.computeIfAbsent(parent, k -> new TreeMap<>());
         map.put(ParsingUtils.getMethodKey(packageEntity.getPath(), md), method);

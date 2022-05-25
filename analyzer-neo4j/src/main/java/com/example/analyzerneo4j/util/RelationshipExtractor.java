@@ -24,11 +24,13 @@ public class RelationshipExtractor extends VoidVisitorAdapter<Void> {
     private String path;
     private Class selfClass;
     private Interface selfInterface;
+    private final Long pid;
 
-    public RelationshipExtractor(Mapper mapper, EntityContainer entityContainer) {
+    public RelationshipExtractor(Mapper mapper, EntityContainer entityContainer, Long pid) {
         this.mapper = mapper;
         this.classRepository = entityContainer.classRepository;
         this.interfaceRepository = entityContainer.interfaceRepository;
+        this.pid = pid;
     }
 
     public void analyze(CompilationUnit cu) {
@@ -104,6 +106,8 @@ public class RelationshipExtractor extends VoidVisitorAdapter<Void> {
 
 
         String parent = ParsingUtils.getKey(path, cid.getNameAsString());
+
+        //TODO composition 조건 재설정
         String relationship = (fd.isFinal())? "Composition": "Association";
         for(var variable: fd.getVariables()) {
             Member member = mapper.members.get(parent).get(variable.getNameAsString());
@@ -114,9 +118,14 @@ public class RelationshipExtractor extends VoidVisitorAdapter<Void> {
                 String innerTypeString = typeString.substring(typeString.indexOf("<") + 1, typeString.indexOf(">"));
                 type = typeSolver.findType(innerTypeString);
 
+                ContainerOptional parentType = typeSolver.findType(typeString);
                 // 사용자 정의 클래스가 아니라면 singleton class로 표현. 없으면 생성
                 if(type.empty()) {
-                    member.setClassType(getClass(typeString));
+                    if(parentType.isClass())
+                        member.setClassType(parentType.getAClass());
+                    else if(parentType.isInterface())
+                        member.setInterfaceType(parentType.getAnInterface());
+                    else member.setClassType(getClass(typeString));
                 } else if(type.isClass()) {
                     Class aClass = type.getAClass();
                     member.setClassType(getClass(typeString)); // e.g. List<aClass>
@@ -242,13 +251,13 @@ public class RelationshipExtractor extends VoidVisitorAdapter<Void> {
     private Class getClass(String typeString) {
         // 다른 사용자정의 클래스를 가져올 수 있음.
         // custom property를 추가해서 해결해야할듯
-        Class target = classRepository.findClassByName(typeString).block();
+        Class target = classRepository.findClassByName(pid, typeString).block();
         if(target == null)
             return classRepository.save(new Class("custom", typeString, false, false, null)).block();
         else return target;
     }
     private Interface getInterface(String typeString) {
-        Interface target = interfaceRepository.findInterfaceByName(typeString).block();
+        Interface target = interfaceRepository.findInterfaceByName(pid, typeString).block();
         if(target == null)
             return interfaceRepository.save(new Interface("", typeString, null)).block();
         else return target;

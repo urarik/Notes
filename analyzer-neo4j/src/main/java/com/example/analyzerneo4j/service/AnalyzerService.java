@@ -18,7 +18,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.neo4j.driver.types.Relationship;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import static com.example.analyzerneo4j.util.JSONConverter.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -118,41 +121,18 @@ public class AnalyzerService {
                 .toString();
     }
 
-
-    private JSONObject nodeToJSON(org.neo4j.driver.types.Node node) {
-        return new JSONObject()
-                .put("id", node.id())
-                .put("label", node.labels())
-                .put("properties", node.asMap());
-    }
-    private JSONObject mapToJSON(Map<Object, Object> map) {
-        JSONObject jsonObject = new JSONObject();
-        map.forEach((key, value) -> jsonObject.put((String) key, value));
-        return jsonObject;
-    }
-    private JSONObject stringMapToJSON(Map<String, Object> map) {
-        JSONObject jsonObject = new JSONObject();
-        map.forEach(jsonObject::put);
-        return jsonObject;
-    }
-
-    private JSONObject relationshipToJSON(Relationship relationship) {
-        return new JSONObject()
-                .put("start", relationship.startNodeId())
-                .put("end", relationship.endNodeId())
-                .put("type", relationship.type())
-                .put("id", relationship.id())
-                .put("properties", relationship.asMap());
-    }
-
     public void process(String url, Long pid) throws IOException, URISyntaxException {
         Project project = verifyDup(url, pid);
         if(project == null) return;
-
         Mapper mapper = new Mapper();
+
         process(mapper, url, project, List.of(this::collectName));
         mapper.store(entityContainer);
-        process(mapper, url, project, List.of(this::extractRelationship, this::extractMethodRelationship));
+        try{
+            process(mapper, url, project, List.of(this::extractRelationship, this::extractMethodRelationship));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mapper.store(entityContainer);
         entityContainer.projectRepository.save(project).subscribe();
     }
@@ -176,7 +156,7 @@ public class AnalyzerService {
         Queue<String> queue = new LinkedList<>();
         initList.forEach(item -> queue.add(BASE_URL + item.attributes().get("href")));
 
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             String next = queue.poll();
             Document document = parser.getDocument(next);
             Elements list = document.select(".js-details-container .Box-row a.Link--primary");
@@ -213,11 +193,11 @@ public class AnalyzerService {
         nameCollector.visit((CompilationUnit) root, null);
     }
     private void extractRelationship(Mapper mapper, Node root, String urlString, Project project) {
-        RelationshipExtractor relationshipExtractor = new RelationshipExtractor(mapper, entityContainer);
+        RelationshipExtractor relationshipExtractor = new RelationshipExtractor(mapper, entityContainer, project.getPids().iterator().next());
         relationshipExtractor.analyze((CompilationUnit) root);
     }
     private void extractMethodRelationship(Mapper mapper, Node root, String urlString, Project project) {
-        MethodRelationshipExtractor methodRelationshipExtractor = new MethodRelationshipExtractor(mapper);
+        MethodRelationshipExtractor methodRelationshipExtractor = new MethodRelationshipExtractor(mapper, entityContainer);
         methodRelationshipExtractor.analyze((CompilationUnit) root);
     }
     private interface TriConsumer<A, B, C, D> {

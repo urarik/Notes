@@ -1,5 +1,6 @@
 import { useRef } from "react";
 
+// 쓰이지 않음.
 export default function(entity, setAfter) {
     let startPoint = [];
     let dragging = useRef(false);
@@ -7,13 +8,8 @@ export default function(entity, setAfter) {
     const onMouseDown = (e) => {
         dragging.current = true;
         startPoint = [e.nativeEvent.offsetX, e.nativeEvent.offsetY];
-        console.log(startPoint);
-
     };
     const onMouseMove = (e) => {
-        console.log(dragging);
-        console.log(`..${startPoint}`);
-
         if(dragging.current) { 
             const [curX, curY] = getPoint(e);
             const [offX, offY] = startPoint;
@@ -28,7 +24,6 @@ export default function(entity, setAfter) {
     const onMouseUp = (e) => {
         const [curX, curY] = getPoint(e);
         const [offX, offY] = startPoint;
-        console.log(`${offX}, ${offY}`);
 
         const newX = curX - offX;
         const newY = curY - offY;

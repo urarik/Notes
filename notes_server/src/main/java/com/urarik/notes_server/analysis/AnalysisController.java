@@ -1,7 +1,9 @@
 package com.urarik.notes_server.analysis;
 
 import com.urarik.notes_server.analysis.dto.AnalyzeRequest;
+import com.urarik.notes_server.analysis.dto.PlaneWithName;
 import com.urarik.notes_server.analysis.table.Plane;
+import com.urarik.notes_server.security.User;
 import com.urarik.notes_server.security.UserInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -100,6 +103,15 @@ public class AnalysisController {
         analysisService.createPlane(plane);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/classdiagram/saves")
+    public ResponseEntity<List<PlaneWithName>> getPlaneList(
+            @RequestParam Long pid
+    ) {
+        List<PlaneWithName> planeList = analysisService.getPlaneList(pid, userInfo.getUsername());
+
+        return ResponseEntity.ok(planeList);
     }
 
 }

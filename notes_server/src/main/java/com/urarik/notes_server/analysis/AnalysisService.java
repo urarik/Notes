@@ -3,6 +3,7 @@ package com.urarik.notes_server.analysis;
 import com.urarik.notes_server.analysis.ClassDiagramRepository;
 import com.urarik.notes_server.analysis.ClassDiagramRepositoryImpl;
 import com.urarik.notes_server.analysis.PlaneRepository;
+import com.urarik.notes_server.analysis.dto.PlaneWithName;
 import com.urarik.notes_server.analysis.table.Entity;
 import com.urarik.notes_server.analysis.table.Plane;
 import com.urarik.notes_server.analysis.table.Relationship;
@@ -97,5 +98,9 @@ public class AnalysisService {
         return true;
     }
 
+    List<PlaneWithName> getPlaneList(Long pid, String userName) {
+        if(!projectService.isMember(pid, userName)) return null;
+        return planeRepository.findPlanesByPid(pid);
+    }
 
 }

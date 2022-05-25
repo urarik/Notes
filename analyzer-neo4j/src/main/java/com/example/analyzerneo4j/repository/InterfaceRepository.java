@@ -10,8 +10,11 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 public interface InterfaceRepository  extends ReactiveNeo4jRepository<Interface, Long> {
-    Mono<Interface> findInterfaceByName(String name);
-
+    @Query("MATCH (p: Project)-[*1..3]-(c: Interface {name: $name})\n" +
+            "WHERE $pid in p.pids\n" +
+            "RETURN c\n " +
+            "LIMIT 1")
+    Mono<Interface> findInterfaceByName(Long pid, String name);
     @Query("MATCH (project: Project) WHERE $pid in project.pids " +
             "MATCH (c: Interface {name: $name})-[:relates*1]-(target) " +
             "RETURN target")

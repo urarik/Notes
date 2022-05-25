@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { activeResizing } from "../../actions";
 
 const delta = 6;
 const squareSize = 8;
 
-export default function({entity, setEntity, children, style}) {
+export default function({entity, setEntity, children, selector, activeResizing, onlyHorizontal}) {
     const startPoint = useRef([]);
     const resizeStartPoint = useRef([]);
     const resizeStartSize = useRef([]);
     const resizeDir = useRef("");
     const resizing = useRef(false);
     const [resize, setResize] = useState(false);
-    const { resizingId, point } = useSelector(state => state.classDiagram);
+    const { resizingId, point } = useSelector(selector);
     const dispatch = useDispatch();
 
     const squareStyle = {
@@ -33,14 +32,14 @@ export default function({entity, setEntity, children, style}) {
     const rightTopStyle = {
         position: 'absolute',
         top: 0 - squareSize / 2,
-        left: entity.rel_w - squareSize / 2,
+        left: entity.relW - squareSize / 2,
         cursor: 'nesw-resize',
         ...squareStyle  
     };
 
     const leftBottomStyle = {
         position: 'absolute',
-        top: entity.rel_h - squareSize / 2,
+        top: entity.relH - squareSize / 2,
         left: 0 - squareSize / 2,
         cursor: 'nesw-resize',
         ...squareStyle  
@@ -48,8 +47,8 @@ export default function({entity, setEntity, children, style}) {
 
     const rightBottomStyle = {
         position: 'absolute',
-        top: entity.rel_h - squareSize / 2,
-        left: entity.rel_w - squareSize / 2,
+        top: entity.relH - squareSize / 2,
+        left: entity.relW - squareSize / 2,
         cursor: 'nwse-resize',
         ...squareStyle  
     };
@@ -71,8 +70,10 @@ export default function({entity, setEntity, children, style}) {
         e.stopPropagation();
         e.preventDefault();
 
+        if(onlyHorizontal === true && dir === 0b00 || dir === 0b10) return;
+
         resizeStartPoint.current = [e.clientX, e.clientY];
-        resizeStartSize.current = [entity.rel_w, entity.rel_h];
+        resizeStartSize.current = [entity.relW, entity.relH];
         resizing.current = true;
         resizeDir.current = dir;
     };
@@ -104,7 +105,8 @@ export default function({entity, setEntity, children, style}) {
             const dir = resizeDir.current;
             const [nWidth, nHeight] = processResizing();
 
-            entity.resize(nWidth, nHeight, dir);
+            if(onlyHorizontal === true) entity.resize(nWidth, entity.relH, dir);
+            else entity.resize(nWidth, nHeight, dir);
             setEntity(entity);
         }
     }, [point]);
@@ -118,7 +120,8 @@ export default function({entity, setEntity, children, style}) {
             const dir = resizeDir.current;
             const [nWidth, nHeight] = processResizing();
 
-            entity.resizeEnd(nWidth, nHeight, dir);
+            if(onlyHorizontal === true) entity.resizeEnd(nWidth, entity.relH, dir);
+            else entity.resizeEnd(nWidth, nHeight, dir);
             setEntity(entity)
             resizing.current = false;
         }

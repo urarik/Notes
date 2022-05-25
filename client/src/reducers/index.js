@@ -9,6 +9,7 @@ import ModuleReducer from './ModuleReducer.js';
 import storage from 'redux-persist/lib/storage';
 import persistReducer from 'redux-persist/es/persistReducer';
 import ClassDiagramReducer from './ClassDiagramReducer';
+import SDReducer from './SDReducer';
 
 const persistConfig = {
     key: "root",
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
     activeNoteBlock: DoActiveNoteBlockReducer,
     blockList: BlockReducer,
     activeClass: ModuleReducer,
-    classDiagram: ClassDiagramReducer
+    classDiagram: ClassDiagramReducer,
+    sd: SDReducer
 });
 
 export default persistReducer(persistConfig, rootReducer);

@@ -23,9 +23,9 @@ public class Method {
     private String name;
     private Boolean isStatic;
 
-    @Relationship(type="belongs_to", direction = Relationship.Direction.INCOMING)
+    @Relationship(type="belongs_to", direction = Relationship.Direction.OUTGOING)
     private Class aClass;
-    @Relationship(type="belongs_to", direction = Relationship.Direction.INCOMING)
+    @Relationship(type="belongs_to", direction = Relationship.Direction.OUTGOING)
     private Interface anInterface;
 
     @Relationship(type="is_return_type_of", direction = Relationship.Direction.OUTGOING)

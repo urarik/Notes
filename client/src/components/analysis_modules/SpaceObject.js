@@ -1,63 +1,69 @@
 export default class SpaceObject {
-    constructor(abs_left, abs_top, abs_w, abs_h, plane, font_size) {
-        this.abs_left = abs_left;
-        this.abs_top = abs_top;
-        this.abs_w = abs_w;
-        this.abs_h = abs_h;
+    constructor(absLeft, absTop, absW, absH, plane) {
+        this.absLeft = absLeft;
+        this.absTop = absTop;
+        this.absW = absW;
+        this.absH = absH;
         this.plane = plane;
-        this.font_size = font_size;
         
         this.adjust();
     }
 
     moveEnd(left, top) {
         this.move(left, top);
-        this.abs_left = (this.rel_left / this.plane.ratio_w) + this.plane.left;
-        this.abs_top = (this.rel_top / this.plane.ratio_h) + this.plane.top;
+        this.absLeft = (this.relLeft / this.plane.ratioW) + this.plane.left;
+        this.absTop = (this.relTop / this.plane.ratioH) + this.plane.top;
     }
 
     move(left, top) {
-        this.rel_left = left;
-        this.rel_top = top;
+        this.relLeft = left;
+        this.relTop = top;
     }
 
     resize(nW, nH, dir) {
 
         if(dir === 0b00) { // Left Top
-            this.rel_left += this.rel_w - nW;
-            this.rel_top += this.rel_h - nH;
+            this.relLeft += this.relW - nW;
+            this.relTop += this.relH - nH;
         } else if(dir === 0b01) { // Left Bottom
-            this.rel_left += this.rel_w - nW;
+            this.relLeft += this.relW - nW;
         } else if(dir === 0b10) { // Right Top
-            this.rel_top += this.rel_h - nH;
+            this.relTop += this.relH - nH;
         } else if(dir === 0b11) { // Right Bottom
             //do nothing
         }
 
-        this.rel_w = nW;
-        this.rel_h = nH;
+        this.relW = nW;
+        this.relH = nH;
     }
 
     resizeEnd(nW, nH, dir) {
         this.resize(nW, nH, dir);
 
-        this.abs_left = (this.rel_left / this.plane.ratio_w) + this.plane.left;
-        this.abs_top = (this.rel_top / this.plane.ratio_h) + this.plane.top;
+        this.absLeft = (this.relLeft / this.plane.ratioW) + this.plane.left;
+        this.absTop = (this.relTop / this.plane.ratioH) + this.plane.top;
 
-        this.abs_w = this.rel_w / this.plane.ratio_w;
-        this.abs_h = this.rel_h / this.plane.ratio_h;
+        this.absW = this.relW / this.plane.ratioW;
+        this.absH = this.relH / this.plane.ratioH;
     }
 
     adjust() {
-        const oRel_h = this.rel_h;
-        this.rel_left = (this.abs_left - this.plane.left) * this.plane.ratio_w;
-        this.rel_top = (this.abs_top - this.plane.top) * this.plane.ratio_h;
-        this.rel_w = (this.abs_w) * this.plane.ratio_w;
-        this.rel_h = (this.abs_h) * this.plane.ratio_h;
+        const oRelH = this.relH;
+        this.relLeft = (this.absLeft - this.plane.left) * this.plane.ratioW;
+        this.relTop = (this.absTop - this.plane.top) * this.plane.ratioH;
+        this.relW = (this.absW) * this.plane.ratioW;
+        this.relH = (this.absH) * this.plane.ratioH;
 
-        const ratio = this.rel_h / oRel_h;
-        if(!isNaN(ratio)) {
-            this.font_size *= ratio;
-        }
+        //TODO: 최소 폰트 사이즈는 10px로 이 방법으론 이 이하로 줄어들지가 않음.
+        // const ratio = this.relH / oRelH;
+        // if(!isNaN(ratio)) {
+        //     this.fontSize *= ratio;
+        // }
+    }
+
+    static relToAbs(rel, plane, dir) {
+        if(dir === "w")
+            return rel / plane.ratioW;
+        else return rel / plane.ratioH;
     }
 }

@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import Entity from './classes/Entity.js';
-import Plane from './classes/Plane.js';
+import CDPlane from './classes/CDPlane';
 import Relationship from './classes/Relationship.js';
+import { H, W } from '../Plane.js';
 
 const contentRatio = 8.5;
 const headerRatio = 10.7;
@@ -11,7 +12,7 @@ const verticalOffset = 50;
 const startTop = 10;
 const startLeft = 20;
 
-export default function initClass(pid, cid, es, rels, container) {
+export function initClassFromScratch(pid, cid, es, rels, container) {
     console.log(es);
     console.log(rels);
     const entities = {};
@@ -92,17 +93,17 @@ export default function initClass(pid, cid, es, rels, container) {
     }
     totalHeight += getHeight(center[cid]);
 
-    // const plane = new Plane(startLeft,
+    // const plane = new CDPlane(startLeft,
     //                         startTop,
     //                         maxLength * (width + horizontalOffset),
     //                         ((top.length + bottom.length + 1) * (verticalOffset + headerRatio)) + (totalHeight * contentRatio),
     //                         container[0],
     //                         container[1]);
-    const plane = new Plane(pid,
+    const plane = new CDPlane(pid,
         startLeft,
         startTop,
-        400,
-        300,
+        W,
+        H,
         container[0],
         container[1]);
 
@@ -111,6 +112,7 @@ export default function initClass(pid, cid, es, rels, container) {
     convertToSpaceEntity(top.reverse(), retEntities, accuTop, plane, maxLength);
     convertToSpaceEntity([center], retEntities, accuTop, plane, maxLength);
     convertToSpaceEntity(bottom, retEntities, accuTop, plane, maxLength);
+    plane.subscribe(retEntities);
 
     // Convert relationship into class diagram relationship.
     const relMapping = {};
@@ -155,7 +157,7 @@ function getHeight(entity) {
     // default absolute height 2
     const len1 = entity['Methods'].length;
     const len2 = entity['Members'].length;
-    return Math.max(((len1 === 0)? 1: len1) + ((len2 === 0)? 1: len2), 2);
+    return (Math.max(((len1 === 0)? 1: len1) + ((len2 === 0)? 1: len2), 2) * contentRatio) + headerRatio;
 }
 
 function convertToSpaceEntity(list, collector, accuTop, plane, maxLength) {
@@ -168,11 +170,11 @@ function convertToSpaceEntity(list, collector, accuTop, plane, maxLength) {
         const maxHeight = entityObject['__maxHeight'];
         delete entityObject['__maxHeight'];
         for(const [key, entity] of Object.entries(entityObject)) {
-            let height = (getHeight(entity) * contentRatio + headerRatio);
+            let height = getHeight(entity);
             if(entity.Entity.label[0] === 'Interface') height += contentRatio * 0.75;
 
             const spaceEntity = 
-                new Entity(left, accuTop.accuTop, width, height, plane, 14, entity.Entity, entity.Methods, entity.Members);
+                new Entity(left, accuTop.accuTop, width, height, plane, entity.Entity, entity.Methods, entity.Members);
                 collector[entity.Entity.id] = spaceEntity;
             
             left += width + horizontalOffset;
@@ -180,4 +182,18 @@ function convertToSpaceEntity(list, collector, accuTop, plane, maxLength) {
 
         accuTop.accuTop += maxHeight + verticalOffset;
     }
+}
+
+export function initClassFromSave(_plane, _entities, _rels) {
+    const plane = CDPlane.getInstanceFromSave(_plane);
+    const entities = Object.fromEntries(Object.entries(_entities).map(([id, entity]) => [id, Entity.getInstanceFromSave(id, entity, plane)]));
+    const rels = _rels.map(_rel => {
+        const rel = Relationship.getInstanceFromSave(_rel);
+        plane.subscribeRel(rel);
+        return rel;
+    });
+
+    plane.subscribe(entities);
+
+    return [plane, entities, rels];
 }

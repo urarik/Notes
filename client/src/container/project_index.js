@@ -10,6 +10,7 @@ import { Route, Routes} from 'react-router-dom';
 import ProjectSetting from "../components/ProjectSetting";
 import { fetchProject } from "../actions";
 import NoteNew from '../components/NoteNew';
+import SequenceDiagram from "../components/analysis_modules/sequendiagram/SequenceDiagram";
 
 export default function(props) {
     const { id } = useParams()
@@ -19,7 +20,8 @@ export default function(props) {
 
     useEffect(() => {
         if(location.state != null) {
-            dispatch(fetchProject(location.state.project));
+            // TODO: fetchProject는 필요없는듯 나중에 다 지워보자
+            // dispatch(fetchProject(location.state.project));
         }
     }, []);
 
@@ -35,6 +37,7 @@ export default function(props) {
                         <Route path={`main`} element={<Note />} />
                         <Route path={`notes`} element={<ProjectNotes />} />
                         <Route path={`classdiagram`} element={<ClassDiagram />}/>
+                        <Route path={`sequencediagram/:mid`} element={<SequenceDiagram />}/>
                         <Route path={`setting`} element={<ProjectSetting />} />
                         <Route path={`note/new`} element={<NoteNew />}/>
                     </Routes>

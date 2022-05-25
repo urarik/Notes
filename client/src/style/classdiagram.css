@@ -47,9 +47,13 @@
     height: 24px;
     line-height: 24px;
     text-overflow: ellipsis;
+    overflow: hidden;
+}
+.classdiagram-container .header .save-load-container {
+    display: flex;
 }
 
-.classdiagram-container .header .name-input {
+.classdiagram-container .header .name {
     height: 32px;
     width: 240px;
 }
@@ -128,6 +132,30 @@
     user-select:none;
 }
 
+.entity .method-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.entity .method-container .go-sd-button {
+    position: absolute;
+    right: 4px;
+    top: 0px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.entity .method-container .go-sd-button .img {
+    width: 90%;
+    height: 90%;
+}
+
+.entity .method-container .go-sd-button:hover {
+    background-color: var(--toggle-color);
+}
+
 .entity .empty-content {
     height: 14px;
 }
@@ -152,6 +180,7 @@
 
     text-align: center;
     line-height: 20px;
+    z-index: 9999;
 
     cursor: pointer;
 }

@@ -7,12 +7,15 @@ import { api, post } from "../api/api";
 import Toast from "./Toast";
 import jsCookies from 'js-cookies';
 import { fetchProject } from "../actions";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import InviteModal from "./util/InviteModal";
 
 export default function(props) {
+    // TODO: 프로젝트 업데이트가 안됨.
+    //  useSelector말고 pid로 하게끔 해야할듯
     const project = useSelector(state => state.project);
     const username= useSelector(state => state.username);
+    const {id} = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -128,7 +131,7 @@ export default function(props) {
 
         try{
             const response = await post(`analyze`, {
-              pid: project.pid, 
+              pid: id, 
               link: e.target[0].value
             });
             if(response.status == 200) {

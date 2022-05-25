@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { activeMoving } from "../../actions";
 
-export default function({entity, setEntity, children, style}) {
+export default function({entity, setEntity, children, style, content, selector, activeMoving, onlyHorizontal}) {
     const dragging = useRef(false);
     const startPoint = useRef([]);
-    const { movingId, point } = useSelector(state => state.classDiagram);
+    const { movingId, point } = useSelector(selector);
     const dispatch = useDispatch();
 
     const handleMouseDown = (e) => {
@@ -25,18 +24,25 @@ export default function({entity, setEntity, children, style}) {
     };
 
     const processMoving = () => {
+        if(point === undefined) return null;
+
         const [curX, curY] = getPoint(...point);
         const [offX, offY] = startPoint.current;
 
         const newX = curX - offX;
-        const newY = curY - offY;
+        let newY;
+        if(onlyHorizontal === true)
+            newY = entity.relTop;
+        else newY = curY - offY;
 
         return [newX, newY];
     }
 
     useEffect(() => {
         if(movingId == entity.id) {
-            const [newX, newY] = processMoving();
+            const result = processMoving();
+            if(result === null) return;
+            const [newX, newY] = result;
 
             entity.move(newX, newY)
             setEntity(entity);
@@ -48,7 +54,9 @@ export default function({entity, setEntity, children, style}) {
         e.preventDefault();
 
         if(movingId == entity.id) {
-            const [newX, newY] = processMoving();
+            const result = processMoving();
+            if(result === null) return;
+            const [newX, newY] = result;
 
             entity.moveEnd(newX, newY);
             setEntity(entity);
@@ -57,7 +65,7 @@ export default function({entity, setEntity, children, style}) {
         }
     }
     const getPoint = (clientX, clientY) => {
-        var bounds = document.getElementById("classdiagram-content").getBoundingClientRect();
+        var bounds = document.getElementById(content).getBoundingClientRect();
         return [clientX - bounds.left, clientY - bounds.top];
     }
     const handleClick = (e) => {

@@ -1,20 +1,18 @@
-export default class Plane {
+import Plane from "../../Plane";
+
+export default class CDPlane extends Plane {
 
     //left, top, w, h는 view 기준
     //container 안에 view가 있고 view가 화면에 보이는 지역
-    constructor(pid, left, top, w, h, container_w, container_h) {
-        this.pid = pid;
-        this.left = left;
-        this.top = top;
-        this.w = w;
-        this.h = h;
-        this.container_w = container_w;
-        this.container_h = container_h;
+    constructor(pid, left, top, w, h, containerW, containerH, id = null) {
+        super(pid, left, top, w, h, containerW, containerH, id);
         this.entities = {};
         this.rels = {};
-
-        this.ratio_w = this.container_w / this.w;
-        this.ratio_h = this.container_h / this.h;
+    }
+    static getInstanceFromSave({id, pid, viewLeft, viewTop, viewW, viewH, containerW, containerH, name}) {
+        const plane = new CDPlane(pid, viewLeft, viewTop, viewW, viewH, containerW, containerH, id);
+        plane.setName(name);
+        return plane;
     }
 
     subscribe(entities) {
@@ -25,11 +23,7 @@ export default class Plane {
     }
 
     zoomIn(percent) {
-        this.w = this.w - this.w * percent;
-        this.h = this.h - this.h * percent;
-
-        this.ratio_w = this.container_w / this.w;
-        this.ratio_h = this.container_h / this.h;
+        super.zoomIn(percent);
         for(const [key, entity] of Object.entries(this.entities))
             entity.adjust(percent);
         for(const [key, rel] of Object.entries(this.rels))
@@ -37,11 +31,7 @@ export default class Plane {
 
     }
     zoomOut(percent) {
-        this.w = this.w + this.w * percent;
-        this.h = this.h + this.h * percent;
-
-        this.ratio_w = this.container_w / this.w;
-        this.ratio_h = this.container_h / this.h;
+        super.zoomOut(percent);
         for(const [key, entity] of Object.entries(this.entities))
             entity.adjust(percent);
         for(const [key, rel] of Object.entries(this.rels))
@@ -56,32 +46,18 @@ export default class Plane {
         }
     }
 
-    setName(name) {
-        this.name = name;
-    }
-
     toJson() {
-        const ret = {
-            pid: this.pid,
-            viewLeft: this.left,
-            viewTop: this.top,
-            viewW: this.w,
-            viewH: this.h,
-            containerW: this.container_w,
-            containerH: this.container_h,
-            name: this.name
-        };
+        const ret = super.toJson();
 
         const entitySet = [];
         for(const id in this.entities) {
             const entity = this.entities[id];
             entitySet.push({
                 id: entity.id,
-                absLeft: entity.abs_left,
-                absTop: entity.abs_top,
-                absW: entity.abs_w,
-                absH: entity.abs_h,
-                fontSize: entity.font_size
+                absLeft: entity.absLeft,
+                absTop: entity.absTop,
+                absW: entity.absW,
+                absH: entity.absH
             });
         }
         ret['entitySet'] = entitySet;

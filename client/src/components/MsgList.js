@@ -11,7 +11,6 @@ export default function({ setVisible }) {
 
     useEffect(async () => {
         const response = await get('/messages', {});
-        console.log(response);
         if(response.status == 200)
         setMsgList(response.data);
     }, []);

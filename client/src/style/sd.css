@@ -1,0 +1,85 @@
+.sd-container {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.sd-container .sd-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    overflow: hidden;
+    cursor: pointer;;
+}
+
+.sd-content .zoom-button {
+    width: 28px;
+    height: 20px;
+    color: var(--primary-color);
+    background-color: var(--toggle-color);
+
+    text-align: center;
+    line-height: 20px;
+    z-index: 9999;
+
+    cursor: pointer;
+}
+.sd-content .zoom-button:hover {
+    background-color: var(--primary-color-light);
+}
+
+.sd-content .adjust {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 64px;
+    height: 24px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.entity.sd-entity {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sd-content .dashed {
+    border: none;
+    border-top: 2px dotted black;
+    width: 100%;
+    height: 100%;
+}
+
+.sd-msg {
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+    margin: 0 auto;
+    white-space: nowrap;
+}
+
+.fragment .header {
+    display: flex;
+}
+
+.fragment .header .type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fragment .header .content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

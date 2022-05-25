@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { activeMoving, activeResizing, activePoint } from '../../../actions'
+import { activeCdMoving, activeCdResizing, activeCdPoint } from '../../../actions'
 
 export default function({plane, editable, children, setEntities, entities}) {
     const dispatch = useDispatch();
@@ -10,28 +10,27 @@ export default function({plane, editable, children, setEntities, entities}) {
     const { point } = useSelector(state => state.classDiagram);
     
     const handleClick = () => {
-        console.log("clicked");
-        dispatch(activeMoving(-1));
-        dispatch(activeResizing(undefined));
+        dispatch(activeCdMoving(-1));
+        dispatch(activeCdResizing(undefined));
     };
 
     const processMoving = e => {
         const [curX, curY] = [e.clientX, e.clientY];
         const [startX, startY] = startPoint.current;
         const [startLeft, startTop] = startPosition.current;
-        const [ratio_w, ratio_h] = [plane.ratio_w, plane.ratio_h];
+        const [ratioW, ratioH] = [plane.ratioW, plane.ratioH];
 
         const offsetX = startX - curX;
         const offsetY = startY - curY;
 
-        const newLeft = startLeft + (offsetX / ratio_w);
-        const newTop = startTop + (offsetY / ratio_h);
+        const newLeft = startLeft + (offsetX / ratioW);
+        const newTop = startTop + (offsetY / ratioH);
 
         return [newLeft, newTop];
     }
 
     const handleMove = e => {
-        dispatch(activePoint([e.clientX, e.clientY]));
+        dispatch(activeCdPoint([e.clientX, e.clientY]));
         if(moving.current) {
             const [newLeft, newTop] = processMoving(e);
 
@@ -51,7 +50,7 @@ export default function({plane, editable, children, setEntities, entities}) {
     const handleMouseUp = e => {
         if(moving.current) {
             const [newLeft, newTop] = processMoving(e);
-            
+            console.log(plane);
             plane.move(newLeft, newTop);
             setEntities({...plane.entities});
             moving.current = false;

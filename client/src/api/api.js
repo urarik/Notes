@@ -11,7 +11,6 @@ const login = async (url, type) => {
 
 const post = async (url, type) => {
     const config = {headers: {Authorization: `Bearer ${jsCookies.getItem("token")}`}};
-    console.log(config);
     return api.post(url, type, config);
 }
 

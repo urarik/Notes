@@ -6,6 +6,10 @@ import javax.persistence.*;
 @Table(name="ENTITY")
 public class Entity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
+    private Long _id;
+
     @Column(nullable = false, updatable = false, name = "id")
     private Long id;
 

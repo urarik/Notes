@@ -14,20 +14,20 @@ export default function({entities, relationship}) {
     const toEntity = entities[toId];
     if(fromEntity === undefined || toEntity === undefined) return (<></>);
     const fromCenter = [
-        fromEntity.rel_left + fromEntity.rel_w / 2,
-        fromEntity.rel_top + fromEntity.rel_h / 2
+        fromEntity.relLeft + fromEntity.relW / 2,
+        fromEntity.relTop + fromEntity.relH / 2
     ];
     const toCenter = [
-        toEntity.rel_left + toEntity.rel_w / 2,
-        toEntity.rel_top + toEntity.rel_h / 2
+        toEntity.relLeft + toEntity.relW / 2,
+        toEntity.relTop + toEntity.relH / 2
     ];
 
     const [fromDegree, toDegree] = getDegree(fromCenter, toCenter);
 
-    const fromStart = [fromEntity.rel_left, fromEntity.rel_top];
-    const fromEnd = [fromEntity.rel_left + fromEntity.rel_w, fromEntity.rel_top + fromEntity.rel_h];
-    const toStart = [toEntity.rel_left, toEntity.rel_top];
-    const toEnd = [toEntity.rel_left + toEntity.rel_w, toEntity.rel_top + toEntity.rel_h];
+    const fromStart = [fromEntity.relLeft, fromEntity.relTop];
+    const fromEnd = [fromEntity.relLeft + fromEntity.relW, fromEntity.relTop + fromEntity.relH];
+    const toStart = [toEntity.relLeft, toEntity.relTop];
+    const toEnd = [toEntity.relLeft + toEntity.relW, toEntity.relTop + toEntity.relH];
 
     const fromStartPoint = adjust(getStartPoint(fromDegree,
                                 fromCenter,
@@ -117,8 +117,8 @@ function getDegree(fromCenter, toCenter) {
             fromDegree = 180;
             toDegree = 0;
         } else {
-            toDegree = 0;
-            fromDegree = 180;
+            toDegree = 180;
+            fromDegree = 0;
         }
     }
 
@@ -185,10 +185,10 @@ function getStartPoint(degree, center, start, end) {
 function adjust(point, degree, order, size, entity, adjustPoint)  {
     if(size === 1) return point;
     else {
-        const edgeDegree = toDegrees(Math.atan((entity.rel_h/2) / (entity.rel_w/2)));
+        const edgeDegree = toDegrees(Math.atan((entity.relH/2) / (entity.relW/2)));
         if(degree >= edgeDegree && degree < 180 - edgeDegree) {
             const newLeft = point[0] - order * 20;
-            const boundary = entity.rel_left;
+            const boundary = entity.relLeft;
             if(newLeft < boundary)
                 return adjust(adjustPoint(180 - edgeDegree + 1), 180 - edgeDegree + 1, order, size, entity);
             
@@ -196,21 +196,21 @@ function adjust(point, degree, order, size, entity, adjustPoint)  {
         } 
         else if(degree >= 180 - edgeDegree && degree < 180 + edgeDegree) {
             const newTop = point[1] + order * 20;
-            const boundary = entity.rel_top + entity.rel_h;
+            const boundary = entity.relTop + entity.relH;
             if(newTop > boundary)
                 return adjust(adjustPoint(edgeDegree + 180 + 1), edgeDegree + 180 + 1, order, size, entity);
             return [point[0], newTop];
         }
         else if(degree >= 180 + edgeDegree && degree < 360 - edgeDegree) {
             const newLeft = point[0] - order * 20;
-            const boundary = entity.rel_left + entity.rel_w;
+            const boundary = entity.relLeft + entity.relW;
             if(newLeft > boundary)
                 return adjust(adjustPoint(360 - edgeDegree + 1), 360 - edgeDegree + 1, order, size, entity);
             return [newLeft, point[1]];
         }
         else {
             const newTop = point[1] + order * 20;
-            const boundary = entity.rel_top;
+            const boundary = entity.relTop;
             if(newTop < boundary)
                 return adjust(adjustPoint(edgeDegree + 1), edgeDegree + 1, order, size, entity);
             return [point[0], point[1] + order * 20];

@@ -13,7 +13,11 @@ import java.util.Optional;
 
 @Repository
 public interface ClassRepository extends ReactiveNeo4jRepository<Class, Long> {
-    Mono<Class> findClassByName(String name);
+    @Query("MATCH (p: Project)-[*1..3]-(c: Class {name: $name})\n" +
+            "WHERE $pid in p.pids\n" +
+            "RETURN c\n " +
+            "LIMIT 1")
+    Mono<Class> findClassByName(Long pid, String name);
 
     @Query("MATCH (project: Project) WHERE $pid in project.pids " +
             "MATCH (c: Class {name: $name})-[:relates*1..$depth]-(target: Class) " +

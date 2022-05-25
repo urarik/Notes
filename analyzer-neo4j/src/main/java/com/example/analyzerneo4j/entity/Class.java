@@ -42,5 +42,7 @@ public class Class {
         this.isAbstract = isAbstract;
         this.isStatic = isStatic;
         this.aPackage = aPackage;
+
     }
+
 }

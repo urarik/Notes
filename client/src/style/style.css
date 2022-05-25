@@ -9,6 +9,7 @@
 @import "msg.css";
 @import "modules.css";
 @import "classdiagram.css";
+@import "sd.css";
 
 :root {
     --body-color: #E4E9F7;
@@ -139,4 +140,14 @@
 }
 .text-center {
     text-align: center;
+}
+
+.no-drag { 
+    -webkit-user-select:none; 
+    -moz-user-select:none; 
+    -ms-user-select:none; 
+    user-select:none;
+}
+.black { 
+    background-color: black;
 }

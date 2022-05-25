@@ -1,12 +1,12 @@
-import { ACTIVE_RESIZING, ACTIVE_MOVING, ACTIVE_POINT } from "../actions";
+import { ACTIVE_CD_RESIZING, ACTIVE_CD_MOVING, ACTIVE_CD_POINT } from "../actions";
 
 export default function(state = {}, action) {
     switch(action.type) {
-        case ACTIVE_RESIZING:
+        case ACTIVE_CD_RESIZING:
             return {...state, resizingId: action.payload};
-        case ACTIVE_MOVING:
+        case ACTIVE_CD_MOVING:
             return {...state, movingId: action.payload};
-        case ACTIVE_POINT:
+        case ACTIVE_CD_POINT:
             return {...state, point: action.payload};
         default:
             return state;

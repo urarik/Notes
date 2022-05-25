@@ -40,4 +40,8 @@ public class ParsingUtils {
 
         return stringBuilder.toString();
     }
+
+    public static boolean startsWithUpperCase(String str) {
+        return !str.isEmpty() && Character.isUpperCase(str.charAt(0));
+    }
 }

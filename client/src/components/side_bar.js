@@ -74,13 +74,13 @@ export default function({id, setCloseMain}) {
                         <li className='nav-link' style={{padding: 0}}>
                             <NavLink to={`/project/${id}/classdiagram`} >
                                 <i className='bx bx-check-square icon' ></i>
-                                <span className='text nav-text'>Module 1</span>
+                                <span className='text nav-text'>Class Diagram</span>
                             </NavLink>
                         </li>
                         <li className='nav-link' style={{padding: 0}}>
-                            <NavLink to={`/project/${id}/module1`} >
+                            <NavLink to={`/project/${id}/sequencediagram`} >
                                 <i className='bx bx-check-square icon' ></i>
-                                <span className='text nav-text'>Module 2</span>
+                                <span className='text nav-text'>Sequence Diagram</span>
                             </NavLink>
                         </li>
                     </ul>

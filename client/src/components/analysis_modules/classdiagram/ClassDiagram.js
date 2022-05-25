@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ModuleSidebar from "../sidebar/ModuleSidebar";
-import { post, get } from '../../../api/api';
+import { post, get, api } from '../../../api/api';
 import { useParams } from "react-router";
-import initClass from "./initClass";
+import { initClassFromSave, initClassFromScratch } from "./initClass";
 import ClassDiagramContent from "./ClassDiagramContent";
 import ClassDiagramEntity from "./ClassDiagramEntity";
 import ClassDiagramRelationship from "./ClassDiagramRelationship";
@@ -14,11 +14,20 @@ export default function(props) {
     const [entities, setEntities] = useState({});
     const [relationships, setRelationships] = useState([]);
     const [name, setName] = useState("");
+    const [saves, setSaves] = useState([]);
+    const [saveId, setSaveId] = useState(-1);
 
     const classEntity = useSelector((state) => state.activeClass);
     const {id} = useParams();
 
     const ref = useRef(null);
+
+    useEffect(async () => {
+        const response = await get('/analyze/classdiagram/saves', {pid: id});
+        setSaves(response.data);
+        if(response.data.length !== 0)
+            setSaveId(response.data[0].id);
+    }, []);
 
     const onAnalysis = async () => {
         const response = await get('analyze/class', {
@@ -28,8 +37,7 @@ export default function(props) {
         })
         if(ref.current) {
             const container = [ref.current.offsetWidth, ref.current.offsetHeight];
-            const [_plane, _entities, _relationships] = initClass(id, classEntity.id, response.data.entities, response.data.relationships, container);
-            _plane.subscribe(_entities);
+            const [_plane, _entities, _relationships] = initClassFromScratch(id, classEntity.id, response.data.entities, response.data.relationships, container);
             setPlane(_plane);
             setEntities(_entities);
             setRelationships(_relationships);
@@ -42,7 +50,6 @@ export default function(props) {
                 if(entity === null) {
                     const newEntities = {...entities};
                     delete newEntities[key];
-                    console.log(relationships);
                     const newRels = relationships.filter(rel => rel.fromId !== key && rel.toId !== key);
                     
                     plane.entities = newEntities;
@@ -50,6 +57,8 @@ export default function(props) {
                     setRelationships(newRels);
                 } else {
                     const newEntities = {...entities, [entity.id]: entity};
+                    plane.entities = newEntities;
+                    setPlane(plane);
                     setEntities(newEntities);
                 }
             };
@@ -66,9 +75,23 @@ export default function(props) {
     const handleSave = async _ => {
         plane.setName(name);
         setPlane(plane);
-        console.log(plane.toJson());
         const response = await post('/analyze/classdiagram/save', plane.toJson());
         
+    }
+    const handleLoad = async _ => {
+        const response = await get('/analyze/classdiagram', {pid: id, planeId: saveId});
+        const [_plane, _entities, _relationships] = initClassFromSave(response.data.plane, response.data.entities, response.data.relationships)
+        setPlane(_plane);
+        setEntities(_entities);
+        setRelationships(_relationships);
+        setName(_plane.name);
+    }
+
+    const renderSaves =  _ => {
+        return saves.map(save => <option key={save.id} value={save.id}>{save.name}</option>);
+    }
+    const handleSaveChange = e => {
+        setSaveId(e.target.value);
     }
 
     return (
@@ -82,16 +105,19 @@ export default function(props) {
 
                         <span>Depth:&nbsp;&nbsp;&nbsp;  </span>
                         <input type="number" 
-                            className="depth-input" 
+                            className="depth-input form-control" 
                             value={depth} 
                             onChange={e => setDepth(e.target.value)}></input>
 
                         <button className="btn btn-primary analysis" onClick={_ => onAnalysis()}>Analysis!</button>
                     </div>
                     <div className="save-load-container">
-                        <input type="text" className="name-input" placeholder="Name!" value={name} onChange={e=>setName(e.target.value)}/>
+                        <input type="text" className="name form-control" placeholder="Name!" value={name} onChange={e=>setName(e.target.value)}/>
                         <button className="btn btn-primary analysis" onClick={handleSave}>Save!</button>
-                        <button className="btn btn-primary analysis">Load!</button>
+                        <select className="name form-select" onChange={handleSaveChange}>
+                            {renderSaves()}
+                        </select>
+                        <button className="btn btn-primary analysis" onClick={handleLoad}>Load!</button>
                     </div>
                 </div>
                 <div ref={ref} className="classdiagram-content" id="classdiagram-content">

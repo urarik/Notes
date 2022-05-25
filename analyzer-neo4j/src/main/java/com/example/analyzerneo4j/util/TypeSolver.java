@@ -14,7 +14,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
-import java.security.InvalidParameterException;
+import static  com.example.analyzerneo4j.util.ParsingUtils.*;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -51,7 +51,8 @@ public class TypeSolver {
     }
 
     public Optional<Class> findClass(String type) {
-        String path = importMap.get(type);
+        String path = reassemblePath(importMap.get(type));
+
         if(path != null) { // import 문에 명시적으로 나와있는 경우
             Class customClass = mapper.classes.get(path);
             if(customClass == null) return Optional.empty();
@@ -74,7 +75,8 @@ public class TypeSolver {
     }
 
     public Optional<Interface> findInterface(String type) {
-        String path = importMap.get(type);
+        String path = reassemblePath(importMap.get(type));
+
         if(path != null) { // import 문에 명시적으로 나와있는 경우
             Interface customInterface = mapper.interfaces.get(path);
             if(customInterface == null) return Optional.empty();
@@ -168,5 +170,19 @@ public class TypeSolver {
                             relate.getType().equals("Generalization")))
                 .findAny();
 
+    }
+
+    public String reassemblePath(String path) {
+        if(path == null) return null;
+
+        String[] token = path.split("\\.");
+        StringBuilder pathBuilder = new StringBuilder();
+        for(int i = 0; i < token.length; ++i) {
+            if(i == token.length - 1 || !startsWithUpperCase(token[i])) {
+                pathBuilder.append(token[i]);
+                if(i != token.length - 1) pathBuilder.append(".");
+            }
+        }
+        return pathBuilder.toString();
     }
 }

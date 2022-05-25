@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 public class ClassDiagramRepositoryImpl implements ClassDiagramRepository{
     private final Driver driver;
 
-    //TODO N+1 problem
+    // TODO N+1 problem
+    //   cypher object로 개선 가능할듯
     public ClassDiagramRepositoryImpl(Driver driver) {
         this.driver = driver;
     }

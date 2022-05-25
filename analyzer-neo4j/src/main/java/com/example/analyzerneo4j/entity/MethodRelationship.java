@@ -16,7 +16,7 @@ public class MethodRelationship {
 
     private Long order;
 
-    private List<State> in;
+    private List<String> states;
     private List<String> arguments;
 
     @Relationship(type = "is_parent_of", direction = Relationship.Direction.OUTGOING)
@@ -25,9 +25,9 @@ public class MethodRelationship {
     @TargetNode
     private Method to;
 
-    public MethodRelationship(Long order, List<State> in, List<String> arguments, Method to) {
+    public MethodRelationship(Long order, List<String> states, List<String> arguments, Method to) {
         this.order = order;
-        this.in = in;
+        this.states = states;
         this.arguments = arguments;
         this.to = to;
     }
