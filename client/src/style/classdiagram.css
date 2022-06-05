@@ -29,6 +29,11 @@
     top: 52px;
 }
 
+.classdiagram-container .classdiagram-content.only-view {
+    left: 0;
+    top: 0;
+}
+
 .classdiagram-container .header .analysis-container {
     display: flex;
     align-items: center;

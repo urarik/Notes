@@ -5,7 +5,7 @@ import java.util.Set;
 
 @javax.persistence.Entity
 @Table(name="PLANE")
-public class Plane {
+public class CDPlane {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
@@ -27,6 +27,9 @@ public class Plane {
     Double containerH;
     @Column
     String name;
+    @Column
+    Double fontSize;
+
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "plane_id")
@@ -35,7 +38,7 @@ public class Plane {
     @JoinColumn(name = "plane_id")
     Set<Relationship> relationshipSet;
 
-    public Plane() {}
+    public CDPlane() {}
 
     public Long getId() {
         return id;
@@ -107,6 +110,14 @@ public class Plane {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Double getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(Double fontSize) {
+        this.fontSize = fontSize;
     }
 
     public Set<Entity> getEntitySet() {

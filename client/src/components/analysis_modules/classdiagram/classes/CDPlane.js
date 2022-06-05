@@ -9,9 +9,10 @@ export default class CDPlane extends Plane {
         this.entities = {};
         this.rels = {};
     }
-    static getInstanceFromSave({id, pid, viewLeft, viewTop, viewW, viewH, containerW, containerH, name}) {
+    static getInstanceFromSave({id, pid, viewLeft, viewTop, viewW, viewH, containerW, containerH, name, fontSize}) {
         const plane = new CDPlane(pid, viewLeft, viewTop, viewW, viewH, containerW, containerH, id);
         plane.setName(name);
+        plane.fontSize = fontSize;
         return plane;
     }
 

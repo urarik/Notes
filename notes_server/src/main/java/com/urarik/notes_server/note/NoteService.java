@@ -1,5 +1,7 @@
 package com.urarik.notes_server.note;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.urarik.notes_server.note.dto.Content;
 import com.urarik.notes_server.note.dto.FullNote;
 import com.urarik.notes_server.note.dto.Ids;
@@ -19,18 +21,22 @@ import com.urarik.notes_server.note.BlockRepository.*;
 
 @Component
 public class NoteService {
+    //TODO 개선점 : projectService에서 다른 service에서 쓰이는 메소드들만 interface로 묶어서 인자로 주자
+    // TODO 다른 것도 마찬가지
     private final NoteRepository noteRepository;
     private final ProjectService projectService;
     private final UserService userService;
     private final BlockRepository blockRepository;
     private final TextRepository textRepository;
+    private final DiagramRepository diagramRepository;
 
-    public NoteService(NoteRepository noteRepository, ProjectService projectService, UserService userService, BlockRepository blockRepository, TextRepository textRepository) {
+    public NoteService(NoteRepository noteRepository, ProjectService projectService, UserService userService, BlockRepository blockRepository, TextRepository textRepository, DiagramRepository diagramRepository) {
         this.noteRepository = noteRepository;
         this.projectService = projectService;
         this.userService = userService;
         this.blockRepository = blockRepository;
         this.textRepository = textRepository;
+        this.diagramRepository = diagramRepository;
     }
 
     public List<NoteRepository.NoteView> getNoteList(Long pid, String userName) {
@@ -75,11 +81,13 @@ public class NoteService {
         List<Content> contents = new ArrayList<>();
         for(BlockView block: blockList) {
             Content content;
-            if("Text".equals(block.getType())) {
+            if("Text".equals(block.getType()) ||
+               "SD".equals(block.getType()) ||
+               "CD".equals(block.getType())) {
                 String text = textRepository.findByBid(block.getBid()).map(
                         TextRepository.TextView::getContent
                 ).orElse("");
-                content = new Content(block.getBid(), "Text", text);
+                content = new Content(block.getBid(), block.getType(), text);
             }
             else throw new IllegalArgumentException();
 
@@ -190,7 +198,9 @@ public class NoteService {
             Block block = new Block(note.get(), sequence + 1, content.getType());
             Long bid = blockRepository.save(block).getBid();
 
-            if(content.getType().equals("Text")) {
+            if("Text".equals(block.getType()) ||
+                "SD".equals(block.getType()) ||
+                "CD".equals(block.getType())) {
                 Text text = new Text(content.getContent(), block);
                 textRepository.save(text);
             }
@@ -213,4 +223,39 @@ public class NoteService {
         return true;
     }
 
+    public boolean upBlock(Long nid, Long bid, String userName) {
+        blockRepository.findById(bid).ifPresent(block -> {
+            if(block.getBelongsTo().getAdmins().stream().noneMatch(admin -> admin.getUsername().equals(userName))) {
+                throw new InvalidParameterException();
+            }
+            if(block.getSequence() == 0) return;
+
+            blockRepository.findBySequence(nid, block.getSequence() - 1).ifPresent(upperBlock -> {
+                upperBlock.setSequence(upperBlock.getSequence() + 1);
+                block.setSequence(block.getSequence() - 1);
+                blockRepository.save(block);
+                blockRepository.save(upperBlock);
+            });
+        });
+
+        return true;
+    }
+
+    public boolean downBlock(Long nid, Long bid, String userName) {
+        blockRepository.findById(bid).ifPresent(block -> {
+            if(block.getBelongsTo().getAdmins().stream().noneMatch(admin -> admin.getUsername().equals(userName))) {
+                throw new InvalidParameterException();
+            }
+            if(block.getSequence() == 0) return;
+
+            blockRepository.findBySequence(nid, block.getSequence() + 1).ifPresent(lowerBlock -> {
+                lowerBlock.setSequence(lowerBlock.getSequence() - 1);
+                block.setSequence(block.getSequence() + 1);
+                blockRepository.save(block);
+                blockRepository.save(lowerBlock);
+            });
+        });
+
+        return true;
+    }
 }

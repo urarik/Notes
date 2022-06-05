@@ -142,6 +142,22 @@ export function initSequenceFromScratch(pid, ary, container) {
     return [mid, plane];
 }
 
-function getMid(w, left) {
-    return left + w / 2;
+export function initSequenceFromSave(_plane, container) {
+    if(container !== undefined) {
+        _plane.containerW = container[0];
+        _plane.containerH = container[1];
+    }
+
+    const _lifeLines = _plane.lifeLineSet;
+    const _fragments = _plane.fragmentSet;
+    const plane = SDPlane.getInstanceFromSave(_plane);
+    const lifeLines = Object.fromEntries(Object.entries(_lifeLines).map(
+        ([idx, lifeLine]) => [lifeLine.id, LifeLine.getInstanceFromSave(lifeLine.id, lifeLine, plane)]));
+    const fragments = Object.fromEntries(Object.entries(_fragments).map(
+        ([idx, fragment]) => [fragment.id, Fragment.getInstanceFromSave(fragment.id, fragment, plane)]));
+
+    plane.subscribeFrags(fragments);
+    plane.subscribeLifes(lifeLines);
+
+    return [plane];
 }

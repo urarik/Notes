@@ -184,7 +184,12 @@ function convertToSpaceEntity(list, collector, accuTop, plane, maxLength) {
     }
 }
 
-export function initClassFromSave(_plane, _entities, _rels) {
+export function initClassFromSave(_plane, _entities, _rels, container) {
+    console.log(_plane)
+    if(container !== undefined) {
+        _plane.containerW = container[0];
+        _plane.containerH = container[1];
+    }
     const plane = CDPlane.getInstanceFromSave(_plane);
     const entities = Object.fromEntries(Object.entries(_entities).map(([id, entity]) => [id, Entity.getInstanceFromSave(id, entity, plane)]));
     const rels = _rels.map(_rel => {

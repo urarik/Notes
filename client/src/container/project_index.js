@@ -38,6 +38,7 @@ export default function(props) {
                         <Route path={`notes`} element={<ProjectNotes />} />
                         <Route path={`classdiagram`} element={<ClassDiagram />}/>
                         <Route path={`sequencediagram/:mid`} element={<SequenceDiagram />}/>
+                        <Route path={`sequencediagram`} element={<SequenceDiagram />}/>
                         <Route path={`setting`} element={<ProjectSetting />} />
                         <Route path={`note/new`} element={<NoteNew />}/>
                     </Routes>

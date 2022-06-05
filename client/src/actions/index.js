@@ -80,10 +80,14 @@ export function deleteBlock(bid) {
     }
 }
 
-export function addBlock(bid) {
+export function addBlock(bid, content, type) {
     return {
         type: ADD_BLOCK,
-        payload: bid
+        payload: {
+            bid,
+            content,
+            type
+        }
     }
 }
 

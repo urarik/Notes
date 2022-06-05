@@ -12,7 +12,7 @@ public class Block {
     @Column(nullable = false, unique = true)
     private Long bid;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private Note belongsTo;
 
     @Column(nullable = false, unique = false)

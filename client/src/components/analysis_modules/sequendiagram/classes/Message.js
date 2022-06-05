@@ -12,6 +12,10 @@ export default class Message {
 
         this.relHeight = (this.absHeight - this.plane.top) * this.plane.ratioH;
     }
+    static getInstanceFromSave({absHeight, type, methodName, msg, id, fromCid, toCid}, plane) {
+        return new Message(absHeight, type, methodName, msg, id, fromCid, toCid, plane);
+    }
+
 
     moveEnd() {
         this.absHeight = (this.relHeight / this.plane.ratioH) + this.plane.top;
@@ -22,14 +26,5 @@ export default class Message {
         if(percentage !== undefined)
             this.relHeight += ((this.absHeight - this.plane.top) * this.plane.ratioH) * percentage;
         else this.relHeight = (this.absHeight - this.plane.top) * this.plane.ratioH;
-
-        if(this.id< 0) 
-            console.log(this.relHeight);
-        if(this.id == 3066) {
-            // console.log(this.absHeight);
-            // console.log(this.plane.top);
-            // console.log(this.plane.ratioH);
-            // console.log(this.relTop);
-        }
     }
 }

@@ -21,4 +21,7 @@ public interface BlockRepository extends CrudRepository<Block, Long> {
 
     @Query("select max(b.sequence) from Block b where b.belongsTo.nid = ?1")
     Optional<Long> findLastSequence(Long nid);
+
+    @Query("select b from Block b where b.belongsTo.nid = ?1 and b.sequence = ?2")
+    Optional<Block> findBySequence(Long nid, Long sequence);
 }

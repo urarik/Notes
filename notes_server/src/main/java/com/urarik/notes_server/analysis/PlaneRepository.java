@@ -1,7 +1,7 @@
 package com.urarik.notes_server.analysis;
 
 import com.urarik.notes_server.analysis.dto.PlaneWithName;
-import com.urarik.notes_server.analysis.table.Plane;
+import com.urarik.notes_server.analysis.table.CDPlane;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -9,10 +9,10 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface PlaneRepository extends CrudRepository<Plane, Long> {
+public interface PlaneRepository extends CrudRepository<CDPlane, Long> {
 
-    @NotNull Optional<Plane> findById(@NotNull Long id);
+    @NotNull Optional<CDPlane> findById(@NotNull Long id);
 
-    @Query(value = "select plane from Plane plane where plane.pid = ?1")
+    @Query(value = "select plane from CDPlane plane where plane.pid = ?1")
     List<PlaneWithName> findPlanesByPid(Long pid);
 }

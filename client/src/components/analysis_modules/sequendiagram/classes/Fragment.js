@@ -10,7 +10,10 @@ export default class Fragment extends SpaceObject{
 
         this.fromId = fromId;
         this.toId = toId;
-
+    }
+    
+    static getInstanceFromSave(id, {absTop, absW, type, content, fromId, toId, absLeft, absH}, plane) {
+        return new Fragment(id, absTop, absLeft, absW, absH, type, content, plane, fromId, toId);
     }
 
     setAbsW(absW) {

@@ -2,8 +2,7 @@ package com.urarik.notes_server.analysis;
 
 import com.urarik.notes_server.analysis.dto.AnalyzeRequest;
 import com.urarik.notes_server.analysis.dto.PlaneWithName;
-import com.urarik.notes_server.analysis.table.Plane;
-import com.urarik.notes_server.security.User;
+import com.urarik.notes_server.analysis.table.CDPlane;
 import com.urarik.notes_server.security.UserInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -99,8 +98,8 @@ public class AnalysisController {
     }
 
     @PostMapping(value = "/classdiagram/save")
-    public ResponseEntity<Object> createClassDiagram(@RequestBody Plane plane) {
-        analysisService.createPlane(plane);
+    public ResponseEntity<Object> createClassDiagram(@RequestBody CDPlane CDPlane) {
+        analysisService.createPlane(CDPlane);
 
         return ResponseEntity.ok().build();
     }

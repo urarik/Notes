@@ -7,7 +7,11 @@ export default function(state = [], action) {
         case DELETE_BLOCK:
             return state.filter(block => block.id != action.payload);
         case ADD_BLOCK:
-            return [...state, {id: action.payload, content: "", type: "Text"}];
+            if(action.payload.type === 'CD' ||
+               action.payload.type === 'SD') {
+
+               }
+            return [...state, action.payload];
         case UPDATE_BLOCK:
             return state.map(block => {
                 if(block.id == action.payload.id) {

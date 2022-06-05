@@ -8,11 +8,11 @@ import ClassDiagramContent from "./ClassDiagramContent";
 import ClassDiagramEntity from "./ClassDiagramEntity";
 import ClassDiagramRelationship from "./ClassDiagramRelationship";
 
-export default function(props) {
+export default function({__plane, __entities, __relationships, onlyView}) {
     const [depth, setDepth] = useState(1);
-    const [plane, setPlane] = useState(null);
-    const [entities, setEntities] = useState({});
-    const [relationships, setRelationships] = useState([]);
+    const [plane, setPlane] = useState(__plane === undefined? null: __plane);
+    const [entities, setEntities] = useState(__entities === undefined? []: __entities);
+    const [relationships, setRelationships] = useState(__relationships === undefined? []: __relationships);
     const [name, setName] = useState("");
     const [saves, setSaves] = useState([]);
     const [saveId, setSaveId] = useState(-1);
@@ -73,7 +73,10 @@ export default function(props) {
     };
 
     const handleSave = async _ => {
-        plane.setName(name);
+        if(plane.name !== name) {
+            plane.setName(name);
+            plane.id = null;
+        }
         setPlane(plane);
         const response = await post('/analyze/classdiagram/save', plane.toJson());
         
@@ -94,33 +97,40 @@ export default function(props) {
         setSaveId(e.target.value);
     }
 
+    let style = {};
+    if(onlyView) style['height'] = 400;
     return (
-        <div className="classdiagram-container">
-            <ModuleSidebar></ModuleSidebar>
+        <div className="classdiagram-container" style={style}>
+            {
+                onlyView === undefined? <ModuleSidebar></ModuleSidebar>: <></>
+            }
             <div>
-                <div className="header">
-                    <div className="analysis-container">
-                        <span>Class:&nbsp;&nbsp;&nbsp;</span>
-                        <div className="class-input">{classEntity.name}</div>
+                {
+                    onlyView === undefined?
+                    <div className="header">
+                        <div className="analysis-container">
+                            <span>Class:&nbsp;&nbsp;&nbsp;</span>
+                            <div className="class-input">{classEntity.name}</div>
 
-                        <span>Depth:&nbsp;&nbsp;&nbsp;  </span>
-                        <input type="number" 
-                            className="depth-input form-control" 
-                            value={depth} 
-                            onChange={e => setDepth(e.target.value)}></input>
+                            <span>Depth:&nbsp;&nbsp;&nbsp;  </span>
+                            <input type="number" 
+                                className="depth-input form-control" 
+                                value={depth} 
+                                onChange={e => setDepth(e.target.value)}></input>
 
-                        <button className="btn btn-primary analysis" onClick={_ => onAnalysis()}>Analysis!</button>
-                    </div>
-                    <div className="save-load-container">
-                        <input type="text" className="name form-control" placeholder="Name!" value={name} onChange={e=>setName(e.target.value)}/>
-                        <button className="btn btn-primary analysis" onClick={handleSave}>Save!</button>
-                        <select className="name form-select" onChange={handleSaveChange}>
-                            {renderSaves()}
-                        </select>
-                        <button className="btn btn-primary analysis" onClick={handleLoad}>Load!</button>
-                    </div>
-                </div>
-                <div ref={ref} className="classdiagram-content" id="classdiagram-content">
+                            <button className="btn btn-primary analysis" onClick={_ => onAnalysis()}>Analysis!</button>
+                        </div>
+                        <div className="save-load-container">
+                            <input type="text" className="name form-control" placeholder="Name!" value={name} onChange={e=>setName(e.target.value)}/>
+                            <button className="btn btn-primary analysis" onClick={handleSave}>Save!</button>
+                            <select className="name form-select" onChange={handleSaveChange}>
+                                {renderSaves()}
+                            </select>
+                            <button className="btn btn-primary analysis" onClick={handleLoad}>Load!</button>
+                        </div>
+                    </div>: <></>
+                }
+                <div ref={ref} className={`classdiagram-content ${onlyView === true? 'only-view': ''}`} id="classdiagram-content">
                     <ClassDiagramContent plane={plane} setEntities={setEntities} entities={entities}>
                         {renderEntity()}
                         {renderRelationship()}

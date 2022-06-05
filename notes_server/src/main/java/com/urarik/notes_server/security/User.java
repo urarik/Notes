@@ -1,6 +1,8 @@
 package com.urarik.notes_server.security;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 @Entity
@@ -58,6 +60,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
                 '}';
+
     }
 
     @Override

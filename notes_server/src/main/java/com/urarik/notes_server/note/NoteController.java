@@ -147,4 +147,26 @@ public class NoteController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PostMapping("/note/block/up")
+    public ResponseEntity<Boolean> upBlock(@RequestBody Ids ids) {
+        try {
+            if (noteService.upBlock(ids.getNid(), ids.getBid(), userInfo.getUsername()))
+                return ResponseEntity.ok().build();
+            else return ResponseEntity.badRequest().build();
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/note/block/down")
+    public ResponseEntity<Boolean> downBlock(@RequestBody Ids ids) {
+        try {
+            if (noteService.downBlock(ids.getNid(), ids.getBid(), userInfo.getUsername()))
+                return ResponseEntity.ok().build();
+            else return ResponseEntity.badRequest().build();
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

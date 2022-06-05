@@ -1,4 +1,5 @@
 import SpaceObject from "../../SpaceObject";
+import Message from "./Message";
 
 const lineWidth = 8;
 
@@ -11,16 +12,20 @@ export default class LifeLine extends SpaceObject {
         this.lineWidth = 8;
 
         this.messages = [];
-        this.fragments = [];
+    }
+
+    static getInstanceFromSave(id, {absTop, absW, name, absLeft, absH, messageSet}, plane) {
+        const newLifLine = new LifeLine(name, absLeft, absTop, absW, absH, id, plane);
+        for(const idx in messageSet) {
+            newLifLine.addMsg(Message.getInstanceFromSave(messageSet[idx], plane));
+        }
+        return newLifLine;
     }
 
     addMsg(message) {
         this.messages.push(message);
     }
 
-    addFragment(fragment) {
-        this.fragments.push(fragment);
-    }
     move(left, top) {
         super.move(left,top);
         for(const key in this.plane.fragments) {

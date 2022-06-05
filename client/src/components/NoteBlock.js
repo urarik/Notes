@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteBlock, doActiveNoteBlock, setNoteBlockContent, updateBlock } from "../actions";
-import { FiSettings } from 'react-icons/fi'
+import { doActiveNoteBlock, setNoteBlockContent } from "../actions";
 import Switch from "./util/Switch";
 import { post } from "../api/api";
 
-export default function ({content, order, bid}) {
+export default function ({content, order, id, setBlock, blocks, setBlocks, nid}) {
     const dispatch = useDispatch();
     const activeNoteBlock = useSelector((state) => state.activeNoteBlock);
     const [active, setActive] = useState('');
@@ -25,13 +24,13 @@ export default function ({content, order, bid}) {
     const setReviseProxy = async () => {
         if(revise == true && reviseContent != content) {
             const block = {
-                id: bid,
+                id: id,
                 type: 'Text',
                 content: reviseContent
             }
             const response = await post('/note/block/update', block);
             if(response.status == 200) {
-                dispatch(updateBlock(block));
+                setBlock(block);
             }
         } 
         setRevise(!revise);
@@ -85,18 +84,32 @@ export default function ({content, order, bid}) {
             setRevise(false);
         }
     }
-    const onDoubleClick = (e) => {
-        setRevise(true);
-        setTimeout(() => {
-            const element = document.getElementById('ta');
-            element.style.height = `${element.scrollHeight}px`;
-        }, 0);
-    };
 
     const onDeleteConfirm = async () => {
-        const response = await post('/note/block/delete', {bid});
+        const response = await post('/note/block/delete', {bid: id});
         if(response.status == 200) {
-            dispatch(deleteBlock(bid));
+            blocks.splice(order, 1);
+            setBlocks([...blocks]);
+        }
+    }
+
+    const handleUp = async () => {
+        if(order === 0) return;
+
+        const response = await post('note/block/up', {bid: id, nid})
+        if(response.status === 200) {
+            [blocks[order], blocks[order-1]] = [blocks[order-1], blocks[order]];
+            setBlocks([...blocks]);
+        }
+    }
+
+    const handleDown = async () => {
+        if(order === blocks.length - 1) return;
+
+        const response = await post('note/block/down', {bid: id, nid})
+        if(response.status === 200) {
+            [blocks[order], blocks[order+1]] = [blocks[order+1], blocks[order]];
+            setBlocks([...blocks]);
         }
     }
 
@@ -117,8 +130,10 @@ export default function ({content, order, bid}) {
                         id={order}
                         color="#BEC9E5"
                     />
-                    <span className="delete-note-button" 
+                    <span className="note-button" 
                         onClick={() => {if (window.confirm('Are you sure you wish to delete this note?')) onDeleteConfirm(); }}>X</span>
+                    <i className='bx bx-up-arrow-alt note-button' onClick={() => handleUp()}></i>
+                    <i className='bx bx-down-arrow-alt note-button' onClick={() => handleDown()}></i>
                  </div>
                  {  !revise && 
                     <ReactMarkdown children={reviseContent} />

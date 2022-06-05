@@ -1,11 +1,8 @@
 package com.urarik.notes_server.analysis;
 
-import com.urarik.notes_server.analysis.ClassDiagramRepository;
-import com.urarik.notes_server.analysis.ClassDiagramRepositoryImpl;
-import com.urarik.notes_server.analysis.PlaneRepository;
 import com.urarik.notes_server.analysis.dto.PlaneWithName;
 import com.urarik.notes_server.analysis.table.Entity;
-import com.urarik.notes_server.analysis.table.Plane;
+import com.urarik.notes_server.analysis.table.CDPlane;
 import com.urarik.notes_server.analysis.table.Relationship;
 import com.urarik.notes_server.project.ProjectService;
 import org.json.JSONObject;
@@ -93,8 +90,8 @@ public class AnalysisService {
         return jsonObject.toMap();
     }
 
-    public boolean createPlane(Plane plane) {
-        planeRepository.save(plane);
+    public boolean createPlane(CDPlane CDPlane) {
+        planeRepository.save(CDPlane);
         return true;
     }
 

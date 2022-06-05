@@ -26,6 +26,7 @@ export default class Plane {
         this.w = this.w - W * percent;
         this.h = this.h - H * percent;
         this.fontSize = this.fontSize + fontSize * percent;
+        console.log(this.fontSize)
 
         this.ratioW = this.containerW / this.w;
         this.ratioH = this.containerH / this.h;
@@ -53,7 +54,8 @@ export default class Plane {
             viewH: this.h,
             containerW: this.containerW,
             containerH: this.containerH,
-            name: this.name
+            name: this.name,
+            fontSize: this.fontSize
         };
         if(this.id !== null) ret.id = this.id;
 

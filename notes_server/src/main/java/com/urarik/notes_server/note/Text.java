@@ -46,4 +46,12 @@ public class Text {
     public void setBelongsTo(Block belongsTo) {
         this.belongsTo = belongsTo;
     }
+
+    public Long getTid() {
+        return tid;
+    }
+
+    public void setTid(Long tid) {
+        this.tid = tid;
+    }
 }

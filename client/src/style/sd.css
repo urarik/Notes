@@ -9,7 +9,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    top: 0;
+    top: 52px;
     overflow: hidden;
     cursor: pointer;;
 }
@@ -26,6 +26,7 @@
 
     cursor: pointer;
 }
+
 .sd-content .zoom-button:hover {
     background-color: var(--primary-color-light);
 }
@@ -82,4 +83,30 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.sd-container > .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    background-color: var(--toggle-color);
+    padding-left: 16px;
+
+    line-height: 52px;
+}
+
+.sd-container .header .save-load-container {
+    display: flex;
+}
+
+.sd-container .header .name {
+    height: 32px;
+    width: 240px;
 }
