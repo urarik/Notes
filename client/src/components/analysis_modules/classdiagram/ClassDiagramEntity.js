@@ -5,11 +5,24 @@ import Resizable from "../Resizable";
 import arrow from '../../../images/arrow-right.svg';
 import { Link } from "react-router-dom";
 import { activeCdMoving, activeCdResizing } from "../../../actions";
+import CodeView from "../CodeView";
 
 export default function({entity, setEntity}) {
     const focusRef = useRef(null);
     const {id} = useParams();
-    const location = useLocation();
+    const [hiding, setHiding] = useState("hiding");
+    const [code, setCode] = useState(false);
+    const hide = () => {
+        setHiding("hiding");
+    }
+    const display = () => {
+        setHiding("")
+    }
+    const displayCode = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setCode(true);
+    }
 
     const style = {
         position: 'absolute',
@@ -18,7 +31,7 @@ export default function({entity, setEntity}) {
         width: entity.relW,
         height: entity.relH,
         cursor: 'pointer',
-        zIndex: 9999
+        zIndex: 8888
     };
     
     const getModifierSymbol = (modifier) => {
@@ -107,6 +120,7 @@ export default function({entity, setEntity}) {
     if(entity.isStatic) nameClass += "under-line ";
     if(entity.isAbstract) nameClass += "italic ";
     return (
+        <>
         <Draggable entity={entity} 
                    setEntity={setEntity} 
                    style={style} 
@@ -117,9 +131,21 @@ export default function({entity, setEntity}) {
                    setEntity={setEntity}
                    selector={state => state.classDiagram}
                    activeResizing={activeCdResizing}>
-            <div className="entity" style={{width: entity.relW, height: entity.relH}} onKeyDown={handleKeyDown} tabIndex="1" onClick={handleOnClick} ref={focusRef}>
+            <div className="entity" 
+                 style={{width: entity.relW, height: entity.relH}} 
+                 onKeyDown={handleKeyDown} 
+                 tabIndex="1" 
+                 onClick={handleOnClick} 
+                 ref={focusRef}
+                 onMouseEnter={() => display()} onMouseLeave={() => hide()}>
                 {renderStereoType()}
-                <div className={nameClass} style={{fontSize: entity.plane.fontSize * 1.25}}>{entity.name}</div>
+                <div className={nameClass} style={{fontSize: entity.plane.fontSize * 1.25}}>
+                    {entity.name}
+                    <i className={`bx bx-dots-horizontal-rounded ${hiding} code-icon`} 
+                       onClick={(e) => displayCode(e)}
+                       onMouseDown={e => e.stopPropagation()}
+                       onMouseUp={e => e.stopPropagation()}></i>
+                </div>
                 <hr className="line"/>
                 {renderMembers()}
                 <hr className="line"/>
@@ -127,5 +153,12 @@ export default function({entity, setEntity}) {
             </div>
         </Resizable>
         </Draggable>
+        {
+                code && <CodeView 
+                            name={entity.name} 
+                            url={entity.url}
+                            setVisibility={setCode}></CodeView>
+            }
+        </>
     );
 }

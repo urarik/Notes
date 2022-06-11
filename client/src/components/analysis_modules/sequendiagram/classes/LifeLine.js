@@ -4,18 +4,19 @@ import Message from "./Message";
 const lineWidth = 8;
 
 export default class LifeLine extends SpaceObject {
-    constructor(name, absLeft, absTop, absW, absH, eid, plane) {
+    constructor(name, absLeft, absTop, absW, absH, eid, url, plane) {
         super(absLeft, absTop, absW, absH, plane);
         
         this.name = name;
         this.id = eid;
         this.lineWidth = 8;
+        this.url = url;
 
         this.messages = [];
     }
 
-    static getInstanceFromSave(id, {absTop, absW, name, absLeft, absH, messageSet}, plane) {
-        const newLifLine = new LifeLine(name, absLeft, absTop, absW, absH, id, plane);
+    static getInstanceFromSave(id, {absTop, absW, name, absLeft, absH, messageSet, url}, plane) {
+        const newLifLine = new LifeLine(name, absLeft, absTop, absW, absH, id, url, plane);
         for(const idx in messageSet) {
             newLifLine.addMsg(Message.getInstanceFromSave(messageSet[idx], plane));
         }

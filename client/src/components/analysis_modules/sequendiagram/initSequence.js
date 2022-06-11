@@ -26,10 +26,10 @@ export function initSequenceFromScratch(pid, ary, container) {
     const classes = {};
     let startLeft = 10, lastCid;
     for(const element of nAry) {
-        const {name, id} = element.entity;
+        const {name, id, url} = element.entity;
          if(!(id in classes)) {
-            const absW = name.length * fontRatio;
-            classes[id] = new LifeLine(name, startLeft, 10, absW, lifeLineHeight, id, plane);
+            const absW = name.length * fontRatio + 8;
+            classes[id] = new LifeLine(name, startLeft, 10, absW, lifeLineHeight, id, url, plane);
 
             lastCid = id;
             startLeft += absW + horizontalOffset;

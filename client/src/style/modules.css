@@ -87,23 +87,28 @@
 /* 833%는 부모의 부모와 width를 같게 하기 위함 */
 /* 부모의 width 12%.  100%(width) : 12%(부모의 부모 기준) = x% : 100% */
 .codeview-container {
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: 0;
-    min-width: calc(833%);
+    left: 250px;
+    min-width: calc(100% - 250px);
     min-height: 100vh;
     background-color: rgb(128, 128, 128, 0.5);
+    z-index: 9999;
+}
+.codeview-container.closed {    
+    left: 88px;
+    min-width: calc(100% - 88px);
 }
 
 .codeview-container .codeview {
     position: relative;
     margin: 32px auto;
     padding: 32px;
-    width: 800px;
+    width: 1000px;
     height: 820px;
     background-color: var(--body-color);
     opacity: 1.0 !important;
-    z-index: 100;
+    z-index: 99999;
 }
 
 .codeview-container .codeview .name {

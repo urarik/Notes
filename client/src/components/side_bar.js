@@ -5,7 +5,7 @@ import Logo from '../assets/logo.png'
 
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser } from '../actions';
+import { fetchUser, setGlobalClose } from '../actions';
 
 
 export default function({id, setCloseMain}) {
@@ -17,10 +17,12 @@ export default function({id, setCloseMain}) {
         if(close == "") {
             setCloseMain("closed");
             setClose("closed");
+            dispatch(setGlobalClose('closed'))
         }
         else {
             setCloseMain("");
             setClose("");
+            dispatch(setGlobalClose(''))
         }
     };
 

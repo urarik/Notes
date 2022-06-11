@@ -21,6 +21,8 @@ export const ACTIVE_SD_RESIZING = "active_sd_resizing";
 export const ACTIVE_SD_MOVING = "active_sd_moving";
 export const ACTIVE_SD_POINT = "active_sd_point";
 
+export const SET_CLOSE = "set_close";
+
 export function fetchNote(id) {
     const note = [
         {
@@ -145,4 +147,11 @@ export function activeSdPoint(point) {
         type: ACTIVE_SD_POINT,
         payload: point
     };
+}
+
+export function setGlobalClose(closed) {
+    return {
+        type: SET_CLOSE,
+        package: closed
+    }
 }

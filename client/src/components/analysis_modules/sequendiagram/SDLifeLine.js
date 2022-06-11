@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router";
 import { activeSdMoving, activeSdResizing } from "../../../actions";
 import Draggable from "../Draggable";
@@ -10,10 +10,25 @@ import chevronLeft from '../../../images/chevron_left.svg';
 import arrowLeft from '../../../images/fill_arrow_left.svg';
 import { msgOffset } from "./initSequence";
 import SpaceObject from "../SpaceObject";
+import CodeView from "../CodeView";
 
 export default function({lifeLine, setLifeLine, lifeLines, cid}) {
     const focusRef = useRef(null);
     const {id} = useParams();
+
+    const [hiding, setHiding] = useState("hiding");
+    const [code, setCode] = useState(false);
+    const hide = () => {
+        setHiding("hiding");
+    }
+    const display = () => {
+        setHiding("")
+    }
+    const displayCode = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setCode(true);
+    }
 
     const style = {
         position: 'absolute',
@@ -22,7 +37,7 @@ export default function({lifeLine, setLifeLine, lifeLines, cid}) {
         width: lifeLine.relW,
         height: lifeLine.relH,
         cursor: 'pointer',
-        zIndex: 9999
+        zIndex: 8888
     };
 
     const lineStyle = {
@@ -185,13 +200,29 @@ export default function({lifeLine, setLifeLine, lifeLines, cid}) {
                     selector={state => state.sd}
                     activeResizing={activeSdResizing}
                     onlyHorizontal={true}>
-                <div className="entity sd-entity" style={{width: lifeLine.relW, height: lifeLine.relH}} onKeyDown={handleKeyDown} tabIndex="1" onClick={handleOnClick} ref={focusRef}>
+                <div className="entity sd-entity" 
+                     style={{width: lifeLine.relW, height: lifeLine.relH}} 
+                     onKeyDown={handleKeyDown} 
+                     tabIndex="1" 
+                     onClick={handleOnClick} 
+                     ref={focusRef}
+                     onMouseEnter={() => display()} onMouseLeave={() => hide()}>
                     <div className={nameClass} style={{fontSize: lifeLine.plane.fontSize}}>{`:${lifeLine.name}`}</div>
+                    <i className={`bx bx-dots-horizontal-rounded ${hiding} code-icon`} 
+                       onClick={(e) => displayCode(e)}
+                       onMouseDown={e => e.stopPropagation()}
+                       onMouseUp={e => e.stopPropagation()}></i>
                 </div>
             </Resizable>
             </Draggable>
             <div className="dashed" style={lineStyle}></div>
             {renderMessages()}
+            {
+                code && <CodeView 
+                            name={lifeLine.name} 
+                            url={lifeLine.url}
+                            setVisibility={setCode}></CodeView>
+            }
         </>
     );
 }

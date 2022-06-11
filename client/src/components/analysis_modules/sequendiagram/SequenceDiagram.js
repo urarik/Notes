@@ -50,6 +50,7 @@ export default function({__plane, __cid, onlyView}) {
     }
     const handleLoad = async _ => {
         const response = await get('/analyze/sd', {pid: id, planeId: saveId});
+        console.log(response.data)
         const [_plane] = initSequenceFromSave(response.data)
         setPlane(_plane);
         setCid(response.data.cid);       

@@ -185,7 +185,6 @@ function convertToSpaceEntity(list, collector, accuTop, plane, maxLength) {
 }
 
 export function initClassFromSave(_plane, _entities, _rels, container) {
-    console.log(_plane)
     if(container !== undefined) {
         _plane.containerW = container[0];
         _plane.containerH = container[1];

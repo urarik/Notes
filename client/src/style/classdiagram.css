@@ -108,7 +108,10 @@
 	cursor:         grabbing !important; /* W3C standards syntax, should come least */
 }
 
+/* relative for code-icon */
 .entity .name {
+    position: relative;
+
     text-align: center;
     font-weight: 500;
 
@@ -163,6 +166,21 @@
 
 .entity .empty-content {
     height: 14px;
+}
+
+.entity .code-icon {
+    position: absolute;
+    top: calc(50% - 12px);
+    right: 8px;
+
+    text-align: center;
+    line-height: 24px;
+    width: 24px; height: 24px;
+    border-radius: 24px;
+    transition: var(--tran-02);
+}
+.entity .code-icon:hover {
+    background-color: var(--toggle-color);
 }
 
 .classdiagram-content .adjust {

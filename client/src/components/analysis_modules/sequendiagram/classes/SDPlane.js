@@ -111,6 +111,7 @@ export default class SDPlane extends Plane {
                 absW: lifeLine.absW,
                 absH: lifeLine.absH,
                 name: lifeLine.name,
+                url: lifeLine.url,
                 messageSet: messageSet
             });
         }
