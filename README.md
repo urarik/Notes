@@ -9,7 +9,7 @@ Note web application for static java code analysis
 
 ### 1. 프로젝트/노트 생성 및 공유
 <img src="images/notes.png" />
-<img src="images/invite.png" />
+<img src="images/초대.gif" />
 
 ### 2. 코드 분석
 * Class diagram
@@ -17,3 +17,6 @@ Note web application for static java code analysis
 * Sequence diagram
 <img src="images/sequencediagram.gif" />
 <img src="images/sequencediagram2.gif" />
+
+### 3. 노트 기능과 코드 분석 기능 결합
+<img src="images/Note.gif" />
